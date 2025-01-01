@@ -24,10 +24,7 @@ std::vector<int> DSaturation(Graph *graph) {
     // Find first available color
     auto firstFreeColor = [&](size_t vertex) -> int {
         int color = 0;
-        for (auto it = adjacentColors[vertex].begin(); it != adjacentColors[vertex].end(); it++) {
-            if (*it != color) {
-                break;
-            }
+        for (auto it = adjacentColors[vertex].begin(); *it == color, it != adjacentColors[vertex].end(); it++) {
             color++;
         }
         return color;
