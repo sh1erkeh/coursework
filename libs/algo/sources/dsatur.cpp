@@ -2,11 +2,8 @@
 
 #include <tuple>
 
-Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree) {
-    this->index = index;
-    this->saturationDegree = saturationDegree;
-    this->uncoloredDegree = uncoloredDegree;
-}
+Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
+    : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
 
 Node::Node()
     : Node(0, 0, 0) {}
