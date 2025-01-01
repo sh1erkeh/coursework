@@ -12,6 +12,7 @@ public:
     Node();
     Node(size_t index, size_t saturationDegree, size_t degree);
 
+    // Not sure what "const bool" does
     const bool operator<(const Node &rhs) const;
 };
 
