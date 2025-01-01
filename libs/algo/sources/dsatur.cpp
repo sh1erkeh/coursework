@@ -53,7 +53,7 @@ std::vector<int> DSaturation(Graph *graph) {
                 queue.erase(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
                 adjacentColors[neighbour].insert(color[vertex]);
                 uncoloredDegree[neighbour]--;
-                queue.emplace(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
+                queue.insert(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
             }
         }
     }
