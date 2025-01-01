@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <stdexcept>
 
+// TODO: test this constructor
 Graph::Graph(size_t numberOfVertices, std::vector<std::set<size_t>> &adjacencyList) {
     this->numberOfVertices = numberOfVertices;
+    // Not sure about this line
     std::copy(adjacencyList.begin(), adjacencyList.end(), std::back_inserter(this->adjacencyList));
 }
 
