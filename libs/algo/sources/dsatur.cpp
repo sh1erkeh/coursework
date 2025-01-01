@@ -1,41 +1,45 @@
-#include "dsatur.h"
-#include <tuple>
-#include <vector>
+#include "../headers/dsatur.h"
 
-Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
-    : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
+#include <tuple>
+
+Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree) {
+    this->index = index;
+    this->saturationDegree = saturationDegree;
+    this->uncoloredDegree = uncoloredDegree;
+}
 
 Node::Node()
     : Node(0, 0, 0) {}
 
 // Compare saturationDegree first then uncoloredDegree 
-bool Node::operator<(const Node &rhs) {
-    return std::tie(this->saturationDegree, this->uncoloredDegree)
-           > std::tie(rhs.saturationDegree, rhs.uncoloredDegree);
+const bool Node::operator<(const Node &rhs) const {
+    return std::tie(this->saturationDegree, this->uncoloredDegree, this->index)
+           > std::tie(rhs.saturationDegree, rhs.uncoloredDegree, rhs.index);
 }
 
-void DSaturation(Graph *graph) {
+std::vector<int> DSaturation(Graph *graph) {
     std::vector<int> color(graph->numberOfVertices, -1);
     std::vector<size_t> uncoloredDegree(graph->numberOfVertices);
 
-    std::vector<std::set<int>> adjacentcolors(graph->numberOfVertices);
+    std::vector<std::set<int>> adjacentColors(graph->numberOfVertices);
     std::set<Node> queue; // Priority queue for finding minimal vertex
 
     // Find first available color
     auto firstFreeColor = [&](size_t vertex) -> int {
         int color = 0;
-        for (auto it = adjacentcolors[vertex].begin(); it != adjacentcolors[vertex].end(); it++) {
+        for (auto it = adjacentColors[vertex].begin(); it != adjacentColors[vertex].end(); it++) {
             if (*it != color) {
-                return color;
+                break;
             }
             color++;
         }
+        return color;
     };
 
     // Add vertices to queue
     for (size_t vertex = 0; vertex < graph->numberOfVertices; vertex++) {
         uncoloredDegree[vertex] = graph->adjacencyList[vertex].size();
-        queue.emplace(Node{vertex, 0, uncoloredDegree[vertex]});
+        queue.insert(Node{vertex, 0, uncoloredDegree[vertex]});
     }
  
     while (!queue.empty()) {
@@ -49,11 +53,13 @@ void DSaturation(Graph *graph) {
         // Update neighbours
         for (size_t neighbour : graph->adjacencyList[vertex]) {
             if (color[neighbour] == -1) {
-                queue.erase(Node{neighbour, adjacentcolors[neighbour].size(), uncoloredDegree[neighbour]});
-                adjacentcolors[neighbour].insert(color[vertex]);
+                queue.erase(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
+                adjacentColors[neighbour].insert(color[vertex]);
                 uncoloredDegree[neighbour]--;
-                queue.emplace(Node{neighbour, adjacentcolors[neighbour].size(), uncoloredDegree[neighbour]});
+                queue.emplace(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
             }
         }
     }
+
+    return color;
 }

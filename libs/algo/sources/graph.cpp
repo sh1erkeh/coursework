@@ -1,4 +1,5 @@
-#include "graph.h"
+#include "../headers/graph.h"
+
 #include <algorithm>
 #include <stdexcept>
 

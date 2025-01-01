@@ -1,5 +1,4 @@
-#ifndef GRAPH
-#define GRAPH
+#pragma once
 
 #include <vector>
 #include <set>
@@ -21,5 +20,3 @@ public:
     void addEdge(size_t from, size_t to);
     // Deletion is not supported yet
 };
-
-#endif
