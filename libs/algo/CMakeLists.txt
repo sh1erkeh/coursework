@@ -16,8 +16,8 @@ set_target_properties(
 
 install(
     TARGETS algo
-    LIBRARY DESTINATION C:/Strawberry/c/lib
-    ARCHIVE DESTINATION C:/Strawberry/c/lib
-    RUNTIME DESTINATION C:/Strawberry/c/bin
-    PUBLIC_HEADER DESTINATION C:/Strawberry/c/include
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    PUBLIC_HEADER DESTINATION include
 )
