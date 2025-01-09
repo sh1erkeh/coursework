@@ -3,6 +3,8 @@
 #include <vector>
 #include <set>
 
+namespace galgo {
+
 // Basic directed graph with no double edges
 class Graph {
 public:
@@ -20,3 +22,5 @@ public:
     void addEdge(size_t from, size_t to);
     // Deletion is not supported yet
 };
+
+}

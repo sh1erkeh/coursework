@@ -1,7 +1,9 @@
-#include "../headers/graph.h"
+#include "../include/graph.h"
 
 #include <algorithm>
 #include <stdexcept>
+
+namespace galgo {
 
 // TODO: test this constructor
 Graph::Graph(size_t numberOfVertices, std::vector<std::set<size_t>> &adjacencyList) {
@@ -20,4 +22,6 @@ void Graph::addEdge(size_t from, size_t to) {
         throw std::invalid_argument("Graph::addEdge arguments cannot be equal");
     }
     this->adjacencyList[from].insert(to);
+}
+
 }

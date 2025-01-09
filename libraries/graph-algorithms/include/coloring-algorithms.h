@@ -2,6 +2,8 @@
 
 #include "graph.h"
 
+namespace galgo {
+
 // Information about each vertex
 class Node {
 public:
@@ -19,3 +21,5 @@ public:
 // 1) Find vertex with minimal (saturationDegree, uncoloredDegree)
 // 2) Paint found vertex in minimal availiable color
 std::vector<int> DSaturation(Graph *graph);
+
+}

@@ -1,6 +1,8 @@
-#include "../headers/dsatur.h"
+#include "../include/coloring-algorithms.h"
 
 #include <tuple>
+
+namespace galgo {
 
 Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
     : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
@@ -59,4 +61,6 @@ std::vector<int> DSaturation(Graph *graph) {
     }
 
     return color;
+}
+
 }

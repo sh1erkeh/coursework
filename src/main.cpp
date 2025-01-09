@@ -2,7 +2,9 @@
 #include <vector>
 
 #include "graph.h"
-#include "dsatur.h"
+#include "coloring-algorithms.h"
+
+using namespace galgo;
 
 int main() {
     Graph *g = new Graph{2};
