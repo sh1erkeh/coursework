@@ -5,7 +5,7 @@
 
 namespace galgo {
 
-// Basic directed graph with no double edges
+// Basic undirected graph with no double edges
 class Graph {
 public:
     size_t numberOfVertices;

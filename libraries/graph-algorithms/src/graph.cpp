@@ -22,6 +22,7 @@ void Graph::addEdge(size_t from, size_t to) {
         throw std::invalid_argument("Graph::addEdge arguments cannot be equal");
     }
     this->adjacencyList[from].insert(to);
+    this->adjacencyList[to].insert(from);
 }
 
 }
