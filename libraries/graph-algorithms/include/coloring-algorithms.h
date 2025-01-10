@@ -15,7 +15,7 @@ public:
     Node(size_t index, size_t saturationDegree, size_t degree);
 
     // Not sure what "const bool" does
-    const bool operator<(const Node &rhs) const;
+    bool operator<(const Node &rhs) const;
 };
 
 // 1) Find vertex with minimal (saturationDegree, uncoloredDegree)

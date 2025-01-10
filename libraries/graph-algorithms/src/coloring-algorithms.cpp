@@ -13,7 +13,7 @@ Node::Node()
 // 1) Compare saturationDegree
 // 2) Compare uncoloredDegree
 // 3) Compare index
-const bool Node::operator<(const Node &rhs) const {
+bool Node::operator<(const Node &rhs) const {
     return std::tie(this->saturationDegree, this->uncoloredDegree, this->index)
            > std::tie(rhs.saturationDegree, rhs.uncoloredDegree, rhs.index);
 }
@@ -29,8 +29,10 @@ std::vector<int> DSaturation(Graph *graph) {
     auto firstFreeColor = [&](size_t vertex) -> int {
         int color = 0;
         // TODO: simplify the following line
-        for (auto it = adjacentColors[vertex].begin(); *it == color, it != adjacentColors[vertex].end(); it++) {
-            color++;
+        for (auto it = adjacentColors[vertex].begin(); it != adjacentColors[vertex].end(); it++) {
+            if (*it != color++) {
+                break;
+            }
         }
         return color;
     };

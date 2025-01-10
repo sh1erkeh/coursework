@@ -7,11 +7,14 @@
 using namespace galgo;
 
 int main() {
-    Graph *g = new Graph{2};
+    Graph *g = new Graph{4};
     g->addEdge(0, 1);
+    g->addEdge(1, 2);
+    g->addEdge(2, 0);
+    g->addEdge(0, 3);
 
     std::vector<int> a = DSaturation(g);
-    for (size_t i = 0; i < 2; i++) {
+    for (size_t i = 0; i < 4; i++) {
         std::cout << a[i] << ' ';
     }
     std::cout << std::endl;
