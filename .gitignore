@@ -2,4 +2,4 @@ build/
 .cache/
 *.cmake
 CMakeFiles/
-Makefile
+/Makefile
