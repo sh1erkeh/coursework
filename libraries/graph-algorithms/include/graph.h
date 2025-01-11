@@ -4,6 +4,8 @@
 #include <set>
 
 namespace galgo {
+    class Graph;
+}
 
 // Basic undirected graph with no double edges
 class Graph {
@@ -22,5 +24,3 @@ public:
     void addEdge(size_t from, size_t to);
     // Deletion is not supported yet
 };
-
-}

@@ -1,20 +1,28 @@
 #include <iostream>
 #include <vector>
+#include <set>
 
 #include "graph.h"
 #include "coloring-algorithms.h"
 
-using namespace galgo;
+using galgo::Graph, galgo::DSaturation;
 
 int main() {
-    Graph *g = new Graph{4};
-    g->addEdge(0, 1);
-    g->addEdge(1, 2);
-    g->addEdge(2, 0);
-    g->addEdge(0, 3);
+    size_t n, m;
+    std::cin >> n >> m;
+
+    std::vector<std::set<size_t>> adj(n);
+    for (size_t i = 0; i < m; i++) {
+        size_t u, v;
+        std::cin >> u >> v;
+        adj[u].insert(v);
+        adj[v].insert(u);
+    }
+
+    Graph *g = new Graph{n, adj};
 
     std::vector<int> a = DSaturation(g);
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < n; i++) {
         std::cout << a[i] << ' ';
     }
     std::cout << std::endl;

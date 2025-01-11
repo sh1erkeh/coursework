@@ -3,15 +3,16 @@ cmake_minimum_required(VERSION 3.28)
 project("coursework")
 
 add_subdirectory(libraries)
+set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64/lib/cmake/Qt6")
 
-add_executable(${PROJECT_NAME})
+find_package(Qt6 6.8.1 REQUIRED COMPONENTS Core)
+qt_standard_project_setup()
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        src/main.cpp
+qt_add_executable(${PROJECT_NAME}
+    src/main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE graph-algorithms)
+target_link_libraries(${PROJECT_NAME} PRIVATE "graph-algorithms;Qt6::Core")
 
 include(CheckCXXCompilerFlag)
 

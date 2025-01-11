@@ -2,7 +2,6 @@
 
 #include <tuple>
 
-namespace galgo {
 
 Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
     : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
@@ -28,7 +27,6 @@ std::vector<int> DSaturation(Graph *graph) {
     // Find first available color
     auto firstFreeColor = [&](size_t vertex) -> int {
         int color = 0;
-        // TODO: simplify the following line
         for (auto it = adjacentColors[vertex].begin(); it != adjacentColors[vertex].end(); it++) {
             if (*it != color++) {
                 break;
@@ -65,4 +63,3 @@ std::vector<int> DSaturation(Graph *graph) {
     return color;
 }
 
-}

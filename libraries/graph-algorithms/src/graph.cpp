@@ -3,12 +3,8 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace galgo {
-
-// TODO: test this constructor
 Graph::Graph(size_t numberOfVertices, std::vector<std::set<size_t>> &adjacencyList) {
     this->numberOfVertices = numberOfVertices;
-    // Not sure about this line
     std::copy(adjacencyList.begin(), adjacencyList.end(), std::back_inserter(this->adjacencyList));
 }
 
@@ -23,6 +19,4 @@ void Graph::addEdge(size_t from, size_t to) {
     }
     this->adjacencyList[from].insert(to);
     this->adjacencyList[to].insert(from);
-}
-
 }
