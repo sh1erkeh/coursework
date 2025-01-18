@@ -2,17 +2,15 @@
 
 #include <tuple>
 
+namespace galgo {
 
-Node::Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
+NodeInfo::NodeInfo(size_t index, size_t saturationDegree, size_t uncoloredDegree)
     : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
-
-Node::Node()
-    : Node(0, 0, 0) {}
 
 // 1) Compare saturationDegree
 // 2) Compare uncoloredDegree
 // 3) Compare index
-bool Node::operator<(const Node &rhs) const {
+bool NodeInfo::operator<(const NodeInfo &rhs) const {
     return std::tie(this->saturationDegree, this->uncoloredDegree, this->index)
            > std::tie(rhs.saturationDegree, rhs.uncoloredDegree, rhs.index);
 }
@@ -22,7 +20,7 @@ std::vector<int> DSaturation(Graph *graph) {
     std::vector<size_t> uncoloredDegree(graph->numberOfVertices);
 
     std::vector<std::set<int>> adjacentColors(graph->numberOfVertices);
-    std::set<Node> queue; // Priority queue for finding minimal vertex
+    std::set<NodeInfo> queue; // Priority queue for finding minimal vertex
 
     // Find first available color
     auto firstFreeColor = [&](size_t vertex) -> int {
@@ -38,7 +36,7 @@ std::vector<int> DSaturation(Graph *graph) {
     // Add vertices to queue
     for (size_t vertex = 0; vertex < graph->numberOfVertices; vertex++) {
         uncoloredDegree[vertex] = graph->adjacencyList[vertex].size();
-        queue.insert(Node{vertex, 0, uncoloredDegree[vertex]});
+        queue.insert(NodeInfo{vertex, 0, uncoloredDegree[vertex]});
     }
  
     while (!queue.empty()) {
@@ -52,10 +50,10 @@ std::vector<int> DSaturation(Graph *graph) {
         // Update neighbours
         for (size_t neighbour : graph->adjacencyList[vertex]) {
             if (color[neighbour] == -1) {
-                queue.erase(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
+                queue.erase(NodeInfo{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
                 adjacentColors[neighbour].insert(color[vertex]);
                 uncoloredDegree[neighbour]--;
-                queue.insert(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
+                queue.insert(NodeInfo{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
             }
         }
     }
@@ -63,3 +61,4 @@ std::vector<int> DSaturation(Graph *graph) {
     return color;
 }
 
+}

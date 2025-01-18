@@ -2,32 +2,35 @@ cmake_minimum_required(VERSION 3.28)
 
 project("coursework")
 
-add_subdirectory(libraries)
-set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64/lib/cmake/Qt6")
+# add_subdirectory(libraries)
+set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64/")
 
-find_package(Qt6 6.8.1 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 qt_standard_project_setup()
 
 qt_add_executable(${PROJECT_NAME}
-    src/main.cpp
+    src/mydialogue.cpp
+    src/test.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE "graph-algorithms;Qt6::Core")
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    Qt6::Widgets
+)
 
 include(CheckCXXCompilerFlag)
 
-function(enable_cxx_compiler_flag_if_supported flag)
+function(add_cxx_compiler_flag flag)
     string(FIND "${CMAKE_CXX_FLAGS}" "${flag}" flag_already_set)
-    if(flag_already_set EQUAL -1)
+    if (flag_already_set EQUAL -1)
         check_cxx_compiler_flag("${flag}" flag_supported)
-        if(flag_supported)
+        if (flag_supported)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE)
-        endif()
+        endif ()
         unset(flag_supported CACHE)
-    endif()
-endfunction()
+    endif ()
+endfunction ()
 
 # example usage
-enable_cxx_compiler_flag_if_supported("-Wall")
-enable_cxx_compiler_flag_if_supported("-Wextra")
-enable_cxx_compiler_flag_if_supported("-Wpedantic")
+add_cxx_compiler_flag("-Wall")
+add_cxx_compiler_flag("-Wextra")
+add_cxx_compiler_flag("-Wpedantic")
