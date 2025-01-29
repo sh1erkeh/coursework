@@ -7,13 +7,13 @@ add_library(${PROJECT_NAME} STATIC)
 set(
     public_headers
         include/graph.h 
-        include/coloring-algorithms.h 
+        include/dsatur.h 
 )
 
 set(
     private_sources
         src/graph.cpp
-        src/coloring-algorithms.cpp
+        src/dsatur.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE "${private_sources}")

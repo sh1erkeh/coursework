@@ -1,9 +1,9 @@
-#include "../include/graph.h"
+#include "../include/graph.hpp"
 
 #include <algorithm>
 #include <stdexcept>
 
-namespace galgo {
+namespace clrAlgo {
 
 Graph::Graph(size_t numberOfVertices, std::vector<std::set<size_t>> &adjacencyList) {
     this->numberOfVertices = numberOfVertices;
