@@ -4,8 +4,13 @@ project("coursework")
 
 add_subdirectory(libraries)
 
-set(SOURCE_FILES src/main.cpp src/colorChooser1.cpp)
-set(HEADER_FILES include/colorChooser1.hpp)
+set(SOURCE_FILES 
+    src/main.cpp 
+    src/colorChoosers/colorChooser1.cpp
+)
+set(HEADER_FILES 
+    include/colorChoosers/colorChooser1.hpp
+)
 
 add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
