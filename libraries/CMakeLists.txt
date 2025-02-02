@@ -1,1 +1,1 @@
-add_subdirectory(graph-algorithms)
+add_subdirectory(graph-coloring)

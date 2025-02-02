@@ -5,7 +5,8 @@
 
 namespace clrAlgo {
 
-// Basic undirected graph with no double edges
+
+// Basic directed graph (no loops and no double edges)
 class Graph {
 public:
     size_t numberOfVertices;
@@ -18,8 +19,19 @@ public:
     Graph(const Graph&) = delete;
     Graph& operator=(const Graph&) = delete;
 
-    // Adds directed edge
-    void addEdge(size_t from, size_t to);
+    // Add directed edge
+    virtual void addEdge(size_t from, size_t to);
 };
+
+// Basic undirected graph (no loops and no double edges)
+class UndirectedGraph: public Graph {
+public:
+    // Inherit constructor
+    using Graph::Graph;
+
+    // Add undirected edge
+    void addEdge(size_t from, size_t to) final;
+};
+
 
 }

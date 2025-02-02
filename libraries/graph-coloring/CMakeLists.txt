@@ -1,19 +1,18 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(graph-algorithms)
+project(graph-coloring)
 
 add_library(${PROJECT_NAME} STATIC)
 
 set(
     public_headers
-        include/graph.h 
-        include/dsatur.h 
+        include/graph.hpp 
+        include/degreeSaturation.hpp
 )
 
 set(
     private_sources
         src/graph.cpp
-        src/dsatur.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE "${private_sources}")

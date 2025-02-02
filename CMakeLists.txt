@@ -3,18 +3,18 @@ cmake_minimum_required(VERSION 3.28)
 project("coursework")
 
 add_subdirectory(libraries)
-# set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64/")
 
-# find_package(Qt6 REQUIRED COMPONENTS Widgets)
-# qt_standard_project_setup()
+set(SOURCE_FILES src/main.cpp src/colorChooser1.cpp)
+set(HEADER_FILES include/colorChooser1.hpp)
 
 add_executable(${PROJECT_NAME}
-    src/main.cpp
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE 
-#    Qt6::Widgets
-    graph-algorithms
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE 
+        graph-coloring
 )
 
 include(CheckCXXCompilerFlag)

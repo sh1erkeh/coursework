@@ -5,34 +5,43 @@
 
 namespace clrAlgo {
 
-template<typename Cache, typename ChooseColor>
-std::vector<int> DSaturation(Graph& graph) {
+
+template<typename ColorChooser>
+std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
     // Stores information about each vertex
     struct Node {
-        size_t index,
-               saturationDegree, // Number of different colors among neighbours
-               uncoloredDegree; // Number of uncolored neighbours
+        size_t index;
+        
+        // Number of different colors among neighbours
+        size_t saturationDegree;
+
+        // Number of uncolored neighbours
+        size_t uncoloredDegree;
 
         Node() = default;
-        Node(size_t index, size_t saturationDegree, size_t degree);
+        Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
+            : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
 
-        bool operator<(const Node& rhs) const;
+        bool operator<(const Node& rhs) const {
+            return std::tie(saturationDegree, uncoloredDegree, index)
+                 > std::tie(rhs.saturationDegree, rhs.uncoloredDegree, rhs.index);
+        }
     };
 
     // Color of each vertex
-    std::vector<int> color(graph.numberOfVertices, -1);
+    std::vector<unsigned> color(graph.numberOfVertices);
 
     // Number of uncolored neighbours of each vertex
     std::vector<size_t> uncoloredDegree(graph.numberOfVertices);
     
     // Set of adjacent colors for each vertex
-    std::vector<std::set<int>> adjacentColors(graph.numberOfVertices);
+    std::vector<std::set<unsigned>> adjacentColors(graph.numberOfVertices);
  
     // Priority queue for finding minimal vertex
     std::set<Node> queue; 
 
-    // Cache stores additional information needed to determine color 
-    Cache cache(graph.numberOfVertices);
+    // Stores additional information needed to determine color 
+    ColorChooser chooser(graph);
 
     // Add vertices to queue
     for (size_t vertex = 0; vertex < graph.numberOfVertices; vertex++) {
@@ -46,12 +55,12 @@ std::vector<int> DSaturation(Graph& graph) {
         queue.erase(queue.begin());
 
         // Color extracted vertex
-        color[vertex] = ChooseColor(cache, vertex);
+        color[vertex] = chooser(graph, vertex, adjacentColors);
 
         // Update neighbours' data
         for (size_t neighbour : graph.adjacencyList[vertex]) {
             // If neighbour is already colored we don't need to update its data  
-            if (color[neighbour] == -1) {
+            if (color[neighbour] == 0) {
                 // Delete old data
                 queue.erase(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
 
@@ -61,14 +70,12 @@ std::vector<int> DSaturation(Graph& graph) {
 
                 // Insert updated data
                 queue.insert(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
-
-                // Update cache 
-                cache.update(color, uncoloredDegree, adjacentColors);
             }
         }
     }
 
     return color;
 }
+
 
 }
