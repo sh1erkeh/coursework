@@ -1,3 +1,4 @@
+![Figure 1](~/Pictures/courcework.png)
 1. Construct Data Bases.
 2. Construct Graph of conflicts.\
     Hard Constraints:
