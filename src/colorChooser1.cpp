@@ -1,4 +1,4 @@
-#include "../../include/colorChoosers/colorChooser1.hpp"
+#include "../include/colorChooser1.hpp"
 
 ColorChooser::Node::Node(unsigned color, unsigned canBeColored, unsigned areColored)
     : color{color}, canBeColored{canBeColored}, areColored(areColored) {}
