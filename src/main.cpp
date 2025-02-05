@@ -18,4 +18,7 @@ int main(int argc, char** argv) {
         std::cout << ans[i] << ' ';
     }
     std::cout << std::endl;
+
+    // CE 
+    std::vector<unsigned> test = clrAlgo::DSaturation<S>(g);
 }

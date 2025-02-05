@@ -2,20 +2,18 @@
 #pragma once
 
 #include "graph.hpp"
+#include "utility.hpp"
 
 #include <vector>
-// #include <iostream>
-// #include <type_traits>
 
 namespace clrAlgo {
 
 
 template<typename ColorChooser>
 std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
-    // if constexpr (is_functor<ColorChooser>::value) {
-    //     std::cerr << "ColorChooser is not a functor" << std::endl;
-    //     std::__terminate();
-    // }
+    if constexpr (!is_size_t_constructible<ColorChooser>::value || !can_choose_color<ColorChooser>::value) {
+        std::__terminate();
+    }
 
     // Stores information about each vertex
     struct Node {
