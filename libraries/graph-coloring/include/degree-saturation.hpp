@@ -1,13 +1,22 @@
+// 1. We need to check if ColorChooser(size_t) and ColorChooser(const Graph&, size_t) are defined
 #pragma once
 
 #include "graph.hpp"
+#include "template-checkers.hpp"
+
 #include <vector>
+#include <iostream>
 
 namespace clrAlgo {
 
 
 template<typename ColorChooser>
 std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
+    if constexpr (is_functor<ColorChooser>::value == false) {
+        std::cerr << "ColorChooser is not a functor" << std::endl;
+        std::__terminate();
+    }
+
     // Stores information about each vertex
     struct Node {
         size_t index;
@@ -20,7 +29,8 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
 
         Node() = default;
         Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
-            : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree} {}
+                : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree}
+            {}
 
         bool operator<(const Node& rhs) const {
             return std::tie(saturationDegree, uncoloredDegree, index)
@@ -35,6 +45,7 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
     std::vector<size_t> uncoloredDegree(graph.numberOfVertices);
     
     // Set of adjacent colors for each vertex
+    // Potential std::bad_alloc
     std::vector<std::set<unsigned>> adjacentColors(graph.numberOfVertices);
  
     // Priority queue for finding minimal vertex
@@ -55,7 +66,7 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
         queue.erase(queue.begin());
 
         // Color extracted vertex
-        color[vertex] = chooser(graph, vertex, adjacentColors);
+        color[vertex] = chooser(graph, vertex);
 
         // Update neighbours' data
         for (size_t neighbour : graph.adjacencyList[vertex]) {

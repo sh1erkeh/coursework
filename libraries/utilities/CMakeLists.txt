@@ -1,16 +1,14 @@
-project(graph-coloring)
+project(utilities)
 
 set(public_headers
-    include/graph.hpp 
-    include/degree-saturation.hpp
+    include/template-checkers.hpp 
 )
 
 set(private_sources
-    src/graph.cpp
+    src/null.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC)
-
 target_sources(${PROJECT_NAME} PRIVATE "${private_sources}")
 
 target_include_directories(${PROJECT_NAME}
@@ -21,10 +19,3 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
-
-# Include utilities library
-target_include_directories(${PROJECT_NAME} 
-    PUBLIC
-        "../utilities/include/"
-)
-target_link_libraries(${PROJECT_NAME} PRIVATE utilities)

@@ -14,17 +14,14 @@ private:
         unsigned areColored;
     
         Node(unsigned color, unsigned canBeColored, unsigned areColored);
-
         bool operator<(const Node& rhs) const;
     };
 
     size_t n; 
     std::set<Node> colorData;
 public:
-    // Constructor
-    ColorChooser(clrAlgo::UndirectedGraph& graph); 
+    ColorChooser(size_t n); 
     
-    // Needed to choose color
-    int operator()(clrAlgo::UndirectedGraph& graph, size_t vertex,
-                   std::vector<std::set<unsigned>>& adjacentColors);
+    // Choose color
+    unsigned operator()(const clrAlgo::UndirectedGraph& graph, size_t vertex);
 };

@@ -4,24 +4,16 @@ project("coursework")
 
 add_subdirectory(libraries)
 
-set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64/")
-set(CMAKE_EXPORT_COMPILER_COMMANDS 1)
+set(CMAKE_EXPORT_COMPILER_COMMANDS=1)
 
 set(SOURCE_FILES 
     src/main.cpp 
-    src/colorChoosers/colorChooser1.cpp
+    src/colorChooser1.cpp
 )
 
 set(HEADER_FILES 
-    include/colorChoosers/colorChooser1.hpp
+    include/colorChooser1.hpp
 )
-
-find_package(Qt6 REQUIRED COMPONENTS Core)
-# qt_standard_project_setup()
-
-# qt_add_executable(${PROJECT_NAME}
-#             
-# )
 
 add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
@@ -31,6 +23,7 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
         graph-coloring
+        utilities
 )
 
 include(CheckCXXCompilerFlag)

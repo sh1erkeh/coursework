@@ -1,30 +1,37 @@
 #include "../include/colorChooser1.hpp"
 
 ColorChooser::Node::Node(unsigned color, unsigned canBeColored, unsigned areColored)
-    : color{color}, canBeColored{canBeColored}, areColored(areColored) {}
+        : color{color}, canBeColored{canBeColored}, areColored(areColored) 
+    {}
 
 bool ColorChooser::Node::operator<(const Node& rhs) const {
     return std::tie(canBeColored, areColored, color)
          < std::tie(rhs.canBeColored, rhs.areColored, rhs.color);
 }
 
-ColorChooser::ColorChooser(clrAlgo::UndirectedGraph& graph) {
-    n = graph.numberOfVertices;
+ColorChooser::ColorChooser(size_t numberOfVertices) {
+    n = numberOfVertices;
     for (unsigned i = 0; i < n; i++) {
         colorData.insert(Node{i, static_cast<unsigned>(n), 0});
     }
 }
 
-int ColorChooser::operator()(clrAlgo::UndirectedGraph& graph, size_t vertex,
-                             std::vector<std::set<unsigned>>& adjacentColors) {
-    // Choose best color 
-    auto best = colorData.begin();
-    for (; best != colorData.end(); best++) {
-        // If no neighbour has the same color as best->color
-        if (adjacentColors[vertex].find(best->color) == adjacentColors[vertex].end()) {
-            break;
+unsigned ColorChooser::operator()(const clrAlgo::UndirectedGraph& graph, size_t vertex) {
+    // Potential std::bad_alloc()
+    std::vector<std::set<unsigned>> adjacentColors(n);
+    
+    auto presentAmongNeighbours = [&adjacentColors](size_t vertex, unsigned color) {
+        if (adjacentColors[vertex].find(color) == adjacentColors[vertex].end()) {
+            return true; 
+        } else {
+            return false;
         }
-    }
+    };
+
+    // Choose best color 
+    std::set<Node>::iterator best = colorData.begin();
+
+    for (; best != colorData.end() && presentAmongNeighbours(vertex, best->color); best++); 
     colorData.erase(colorData.begin());
     
     // Update color's data
@@ -32,8 +39,10 @@ int ColorChooser::operator()(clrAlgo::UndirectedGraph& graph, size_t vertex,
 
     for (size_t neighbour : graph.adjacencyList[vertex]) {
         // If our neighbour could have been colored in <color> before, now it can't be
-        if (adjacentColors[neighbour].find(best->color) == adjacentColors[neighbour].end()) {
+        if (!presentAmongNeighbours(neighbour, best->color)) {
             updC.canBeColored--;
+        } else {
+            adjacentColors[neighbour].insert(best->color);
         }
     }
     
