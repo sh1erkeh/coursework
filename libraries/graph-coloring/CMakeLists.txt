@@ -21,10 +21,3 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
-
-# Include utilities library
-target_include_directories(${PROJECT_NAME} 
-    PUBLIC
-        "../utilities/include/"
-)
-target_link_libraries(${PROJECT_NAME} PRIVATE utilities)

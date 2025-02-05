@@ -19,6 +19,7 @@ private:
 
     size_t n; 
     std::set<Node> colorData;
+    std::vector<std::set<unsigned>> adjacentColors;
 public:
     ColorChooser(size_t n); 
     

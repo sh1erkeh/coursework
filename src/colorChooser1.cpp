@@ -14,17 +14,15 @@ ColorChooser::ColorChooser(size_t numberOfVertices) {
     for (unsigned i = 0; i < n; i++) {
         colorData.insert(Node{i, static_cast<unsigned>(n), 0});
     }
+    adjacentColors.assign(n, std::set<unsigned>());
 }
 
 unsigned ColorChooser::operator()(const clrAlgo::UndirectedGraph& graph, size_t vertex) {
-    // Potential std::bad_alloc()
-    std::vector<std::set<unsigned>> adjacentColors(n);
-    
-    auto presentAmongNeighbours = [&adjacentColors](size_t vertex, unsigned color) {
+    auto presentAmongNeighbours = [&](size_t vertex, unsigned color) {
         if (adjacentColors[vertex].find(color) == adjacentColors[vertex].end()) {
-            return true; 
+            return false; 
         } else {
-            return false;
+            return true;
         }
     };
 
@@ -41,11 +39,9 @@ unsigned ColorChooser::operator()(const clrAlgo::UndirectedGraph& graph, size_t 
         // If our neighbour could have been colored in <color> before, now it can't be
         if (!presentAmongNeighbours(neighbour, best->color)) {
             updC.canBeColored--;
-        } else {
             adjacentColors[neighbour].insert(best->color);
         }
-    }
-    
+    } 
     // Insert updated data 
     colorData.insert(updC);
 

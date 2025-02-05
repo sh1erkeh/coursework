@@ -2,20 +2,20 @@
 #pragma once
 
 #include "graph.hpp"
-#include "template-checkers.hpp"
 
 #include <vector>
-#include <iostream>
+// #include <iostream>
+// #include <type_traits>
 
 namespace clrAlgo {
 
 
 template<typename ColorChooser>
 std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
-    if constexpr (is_functor<ColorChooser>::value == false) {
-        std::cerr << "ColorChooser is not a functor" << std::endl;
-        std::__terminate();
-    }
+    // if constexpr (is_functor<ColorChooser>::value) {
+    //     std::cerr << "ColorChooser is not a functor" << std::endl;
+    //     std::__terminate();
+    // }
 
     // Stores information about each vertex
     struct Node {
@@ -52,7 +52,7 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
     std::set<Node> queue; 
 
     // Stores additional information needed to determine color 
-    ColorChooser chooser(graph);
+    ColorChooser chooser(graph.numberOfVertices);
 
     // Add vertices to queue
     for (size_t vertex = 0; vertex < graph.numberOfVertices; vertex++) {
