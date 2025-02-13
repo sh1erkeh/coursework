@@ -1,5 +1,8 @@
 #include "../include/color-choosers.hpp"
 
+namespace util {
+
+
 ColorChooser::Node::Node(unsigned color, unsigned canBeColored, unsigned areColored)
         : color{color}, canBeColored{canBeColored}, areColored(areColored) 
     {}
@@ -46,4 +49,7 @@ unsigned ColorChooser::operator()(const clrAlgo::UndirectedGraph& graph, size_t 
     colorData.insert(updC);
 
     return best->color;
+}
+
+
 }
