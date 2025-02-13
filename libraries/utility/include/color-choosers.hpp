@@ -2,6 +2,9 @@
 
 #include "graph.hpp"
 
+namespace util {
+
+
 class ColorChooser {
 private:
     struct Node {
@@ -26,3 +29,6 @@ public:
     // Choose color
     unsigned operator()(const clrAlgo::UndirectedGraph& graph, size_t vertex);
 };
+
+
+}
