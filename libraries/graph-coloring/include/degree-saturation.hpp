@@ -1,4 +1,3 @@
-// 1. We need to check if ColorChooser(size_t) and ColorChooser(const Graph&, size_t) are defined
 #pragma once
 
 #include "graph.hpp"
