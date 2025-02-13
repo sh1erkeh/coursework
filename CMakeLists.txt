@@ -8,16 +8,15 @@ set(CMAKE_EXPORT_COMPILER_COMMANDS=1)
 
 set(SOURCE_FILES 
     src/main.cpp 
-    src/colorChooser1.cpp
 )
 
-set(HEADER_FILES 
-    include/colorChooser1.hpp
-)
+# set(HEADER_FILES 
+#     include/colorChooser1.hpp
+# )
 
 add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
-    ${HEADER_FILES}
+    # ${HEADER_FILES}
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -35,8 +35,6 @@ void tabuSearch(std::vector<unsigned>& solution, unsigned maxIter, size_t tabuLi
         current_solution = best_neighbour;
         tabuList.push_back(best_neighbour);
         if (tabuList.size() > tabuListSize) {
-            // Remove the oldest entry from the
-            // tabu list if it exceeds the size
             tabuList.erase(tabuList.begin());
         }
 
