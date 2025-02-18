@@ -1,6 +1,12 @@
 #pragma once
 
+#include <set>
+#include <vector>
+
 #include "graph.hpp"
+
+namespace util {
+
 
 class ColorChooser {
 private:
@@ -26,3 +32,6 @@ public:
     // Choose color
     unsigned operator()(const clrAlgo::UndirectedGraph& graph, size_t vertex);
 };
+
+
+}

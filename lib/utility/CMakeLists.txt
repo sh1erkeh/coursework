@@ -1,12 +1,15 @@
-project(graph-coloring)
+project(utility)
 
 set(public_headers
-    include/graph.hpp 
-    include/degree-saturation.hpp
+    include/color-choosers.hpp 
+    include/get-neighbours.hpp
+    include/objective-functions.hpp
 )
 
 set(private_sources
-    src/graph.cpp
+    src/color-choosers.cpp 
+    src/get-neighbours.cpp
+    src/objective-functions.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC)
@@ -18,6 +21,11 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src 
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC 
+        graph-coloring
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")

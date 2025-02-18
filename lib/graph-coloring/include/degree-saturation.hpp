@@ -1,8 +1,6 @@
-// 1. We need to check if ColorChooser(size_t) and ColorChooser(const Graph&, size_t) are defined
 #pragma once
 
 #include "graph.hpp"
-#include "utility.hpp"
 
 #include <vector>
 
@@ -11,9 +9,7 @@ namespace clrAlgo {
 
 template<typename ColorChooser>
 std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
-    if constexpr (!is_size_t_constructible<ColorChooser>::value || !can_choose_color<ColorChooser>::value) {
-        std::__terminate();
-    }
+    // TODO: check template parameters
 
     // Stores information about each vertex
     struct Node {
