@@ -4,8 +4,6 @@
 #include <limits>
 #include <algorithm>
 
-// #include "utility.hpp"
-
 template<typename ObjectiveFunction, typename GetNeighbours>
 void tabuSearch(std::vector<unsigned>& solution, unsigned maxIter, size_t tabuListSize) {
     // TODO: write concepts for template arguments
@@ -34,6 +32,7 @@ void tabuSearch(std::vector<unsigned>& solution, unsigned maxIter, size_t tabuLi
 
         current_solution = best_neighbour;
         tabuList.push_back(best_neighbour);
+
         if (tabuList.size() > tabuListSize) {
             tabuList.erase(tabuList.begin());
         }

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <set>
+#include <vector>
+
 #include "graph.hpp"
 
 namespace util {

@@ -3,6 +3,7 @@ project(graph-coloring)
 set(public_headers
     include/graph.hpp 
     include/degree-saturation.hpp
+    include/tabu-search.hpp
 )
 
 set(private_sources

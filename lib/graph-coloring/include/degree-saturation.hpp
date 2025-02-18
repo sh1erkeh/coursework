@@ -9,9 +9,7 @@ namespace clrAlgo {
 
 template<typename ColorChooser>
 std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
-    // if constexpr (!is_size_t_constructible<ColorChooser>::value || !can_choose_color<ColorChooser>::value) {
-    //     std::__terminate();
-    // }
+    // TODO: check template parameters
 
     // Stores information about each vertex
     struct Node {
