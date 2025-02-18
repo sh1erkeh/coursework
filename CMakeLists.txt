@@ -6,7 +6,7 @@ add_subdirectory(lib)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -lsqlite3")
 
 add_executable(${PROJECT_NAME}
     src/main.cpp 
@@ -15,4 +15,6 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
         graph-coloring
+        db-handler
+        utility
 )
