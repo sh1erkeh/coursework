@@ -1,7 +1,5 @@
-#include "graph.hpp"
+#include "handler.hpp"
 
-#include <iostream>
-
-int main(int argc, char** argv) {
-
+int main() {
+    Handler& h = Handler::Instance("test.db");
 }
