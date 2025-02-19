@@ -15,25 +15,19 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# add_executable(${PROJECT_NAME}
-#     src/main.cpp 
-#     src/dsatur-util.cpp
-#     src/tabu-search-util.cpp
-#     include/dsatur-util.hpp
-#     include/tabu-search-util.hpp
-# )
-
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-    ui/main.cpp
-    ui/mainwindow.cpp
+    src/main.cpp
+    src/mainwindow.cpp
     src/dsatur-util.cpp
     src/tabu-search-util.cpp
-    ui/mainwindow.h
+
     include/dsatur-util.hpp
     include/tabu-search-util.hpp
+
+    ui/mainwindow.h
     ui/mainwindow.ui
     ${TS_FILES}
 )
