@@ -5,9 +5,6 @@
 
 #include "graph.hpp"
 
-namespace util {
-
-
 class ColorChooser {
 private:
     struct Node {
@@ -33,5 +30,3 @@ public:
     unsigned operator()(const clrAlgo::UndirectedGraph& graph, size_t vertex);
 };
 
-
-}

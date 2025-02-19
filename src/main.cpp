@@ -1,35 +1,49 @@
-#include "handler.hpp"
+#include "degree-saturation.hpp"
+#include "tabu-search.hpp"
+#include "graph.hpp"
+#include "../include/dsatur-util.hpp"
+#include "../include/tabu-search-util.hpp"
 
 #include <iostream>
 
-struct Log {
-    static int operator()(void* data, int argc, char** argv, char** colName) {
-        std::cerr << static_cast<const char*>(data) << ":\n";
-        for (int i = 0; i < argc; i++) {
-            std::cerr << colName[i] << " = " << (argv[i] ? argv[i] : "NULL") << '\n';
-        }
-        std::cerr << std::endl;
-        return 0;
+int log(void* data, int argc, char** argv, char** colName) {
+    std::cerr << static_cast<const char*>(data) << ":\n";
+    for (int i = 0; i < argc; i++) {
+        std::cerr << colName[i] << " = " << (argv[i] ? argv[i] : "NULL") << '\n';
     }
-};
+    std::cerr << std::endl;
+    return 0;
+}
+
+using clrAlgo::UndirectedGraph;
+
 int main() {
-    Handler<Log>& h = Handler<Log>::Instance("test.db");
-    const char* sql = "CREATE TABLE COMPANY("  \
-      "ID INT PRIMARY KEY     NOT NULL," \
-      "NAME           TEXT    NOT NULL," \
-      "AGE            INT     NOT NULL," \
-      "ADDRESS        CHAR(50)," \
-      "SALARY         REAL );";
-    h.execute(sql);
-    sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "  \
-         "VALUES (1, 'Paul', 32, 'California', 20000.00 ); " \
-         "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "  \
-         "VALUES (2, 'Allen', 25, 'Texas', 15000.00 ); "     \
-         "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)" \
-         "VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );" \
-         "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)" \
-         "VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );";
-    h.execute(sql);
-    sql = "SELECT * from COMPANY";
-    h.execute(sql);
+    UndirectedGraph g{8};
+
+    g.addEdge(0, 1);
+    g.addEdge(1, 2);
+    g.addEdge(1, 6);
+    g.addEdge(2, 4);
+    g.addEdge(4, 3);
+    g.addEdge(4, 5);
+    g.addEdge(4, 7);
+    g.addEdge(7, 5);
+    g.addEdge(5, 6);
+    g.addEdge(3, 5);
+
+    std::vector<unsigned> coloring = clrAlgo::DSaturation<ColorChooser>(g);
+    for (size_t i = 0; i < g.numberOfVertices; i++) {
+        std::cout << coloring[i] << ' ';
+    }
+    std::cout << std::endl;
+
+
+    clrAlgo::tabuSearch<ObjectiveFunction, GetNeighbours>(g, coloring, 1000, 10);
+
+    for (size_t i = 0; i < g.numberOfVertices; i++) {
+        std::cout << coloring[i] << ' ';
+    }
+    std::cout << std::endl;
+
+    return 0;
 }
