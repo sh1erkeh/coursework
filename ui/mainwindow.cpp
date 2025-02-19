@@ -12,20 +12,21 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpinBox>
-#include <string>
-#include <vector>
+
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow), count(2)
-{
+        : QMainWindow(parent), ui(new Ui::MainWindow), count(2) 
+    {
     ui->setupUi(this);
+    
     //обозначение переменных чтобы было более легкое понимание;
     switch_4 = ui->pushButton_4;
+    
     ui->widget_5->hide();
     ui->widget_3->show();
     ui->widget_8->show();
     ui->widget_9->hide();
     ui->widget_6->hide();
+    
     //устанавливаю разые акценты на свитчах
     switch_4->setStyleSheet("QPushButton {""background-color: rgb(60,60,60);"
                             "border-top-right-radius: 15px;"
@@ -144,8 +145,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::switchPage);
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
@@ -362,8 +362,7 @@ void MainWindow::onButton13Clicked()
 
 }
 
-void MainWindow::onButton16Clicked()
-{
+void MainWindow::onButton16Clicked() {
     close();
 
 }
