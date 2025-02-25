@@ -1,4 +1,5 @@
-#include "../ui/mainwindow.h"
+#include "../include/users-db-handler.hpp"
+#include "../ui/log-window.hpp"
 
 #include <QApplication>
 #include <QLocale>
@@ -7,8 +8,8 @@
 int main(int argc, char** argv) {
     QApplication a(argc, argv);
 
-    MainWindow w;
-    w.show();
+    LoginWindow loginWindow;
+    loginWindow.show();
 
     return a.exec();
 }

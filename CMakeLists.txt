@@ -25,12 +25,16 @@ set(PROJECT_SOURCES
     src/dsatur-util.cpp
     src/tabu-search-util.cpp
     src/data-fetcher.cpp
+    src/users-db-handler.cpp
 
     include/dsatur-util.hpp
     include/tabu-search-util.hpp
     include/data-fetcher.hpp
+    include/users-db-handler.hpp
 
     ui/mainwindow.h
+    ui/log-window.hpp
+    ui/reg-window.hpp
     ui/mainwindow.ui
     ${TS_FILES}
 )
