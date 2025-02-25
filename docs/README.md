@@ -1,4 +1,3 @@
-![Figure 1](figure1.png)
 1. Construct Data Bases.
 2. Construct Graph of conflicts.\
     Hard Constraints:
