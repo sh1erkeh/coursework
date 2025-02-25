@@ -7,6 +7,7 @@ add_subdirectory(lib)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
 
 set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64/")
@@ -15,53 +16,43 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
 
 set(PROJECT_SOURCES
     src/main.cpp
     src/mainwindow.cpp
+
     src/dsatur-util.cpp
     src/tabu-search-util.cpp
+    src/data-fetcher.cpp
 
     include/dsatur-util.hpp
     include/tabu-search-util.hpp
+    include/data-fetcher.hpp
 
     ui/mainwindow.h
     ui/mainwindow.ui
     ${TS_FILES}
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${PROJECT_NAME}
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        ui/resources.qrc
-    )
-else()
-    if(ANDROID)
-        add_library(${PROJECT_NAME} SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(${PROJECT_NAME}
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+qt_add_executable(${PROJECT_NAME}
+    MANUAL_FINALIZATION
+    ${PROJECT_SOURCES}
+    ui/resources.qrc
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${Qt6_INCLUDE_DIRS}
+)
 
 target_link_libraries(${PROJECT_NAME} 
     PRIVATE 
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
+        Qt6::Sql
         graph-coloring
-        db-handler
-    PUBLIC
-        sqlite3
 )
 
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.${PROJECT_NAME})
-endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -77,6 +68,4 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(${PROJECT_NAME})
-endif()
+qt_finalize_executable(${PROJECT_NAME})

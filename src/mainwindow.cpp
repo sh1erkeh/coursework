@@ -364,5 +364,4 @@ void MainWindow::onButton13Clicked()
 
 void MainWindow::onButton16Clicked() {
     close();
-
 }
