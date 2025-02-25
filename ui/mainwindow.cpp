@@ -12,20 +12,56 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpinBox>
-#include <string>
-#include <vector>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+#include <QDir>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), count(2)
 {
     ui->setupUi(this);
-    //обозначение переменных чтобы было более легкое понимание;
     switch_4 = ui->pushButton_4;
     ui->widget_5->hide();
     ui->widget_3->show();
     ui->widget_8->show();
     ui->widget_9->hide();
     ui->widget_6->hide();
+
+    QDir dir;
+    QString path = dir.currentPath() + "/database";
+
+    if (!dir.exists(path)) {
+        dir.mkpath(path);
+    }
+
+    QString dbPath = path + "/data.db";
+
+    QSqlDatabase db = QSqlDatabase::addDatabase(("QSQLITE"));
+    db.setDatabaseName(dbPath);
+
+    if (!db.open()){
+        qDebug() <<"Ошибка открытия базы данных: "<< db.lastError().text();
+        return;
+    }
+
+    QSqlQuery query;
+    QString createTableQuery =
+        "CREATE TABLE IF NOT EXISTS text_data ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "page INTEGER, "
+        "field INTEGER, "
+        "amount INTEGER, "
+        "content TEXT)";
+    if (!query.exec(createTableQuery)) {
+        qDebug() <<"Ошибка создания таблицы: " << query.lastError().text();
+    }else{
+        qDebug() << "База данных успешно инициализирована!";
+        qDebug() <<dbPath;
+    }
+
+    //
     //устанавливаю разые акценты на свитчах
     switch_4->setStyleSheet("QPushButton {""background-color: rgb(60,60,60);"
                             "border-top-right-radius: 15px;"
@@ -142,13 +178,80 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::switchPage);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::switchPage);
+    connect(ui->saveButton, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+void MainWindow::on_saveButton_clicked() {
+    QSqlDatabase db = QSqlDatabase::database();
 
+    if (!db.isOpen()) {
+        qDebug() << "Ошибка: база данных не открыта";
+        return;
+    }
+
+    QSqlQuery query;
+
+    // Очистка таблицы
+    if (!query.exec("DELETE FROM text_data")) {
+        qDebug() << "Ошибка очистки таблицы" << query.lastError().text();
+        return;
+    } else {
+        qDebug() << "Таблица успешно очищена";
+    }
+
+    // Подготовка запроса с четырьмя параметрами
+    query.prepare("INSERT INTO text_data (page, field, amount, content) VALUES (:page, :field, :amount, :content)");
+
+    int pageCount = ui->stackedWidget->count();
+    for (int i = 0; i < pageCount; ++i) {
+        QWidget *page = ui->stackedWidget->widget(i);
+        QList<QWidget *> containers = page->findChildren<QWidget *>();
+
+        int fieldIndex = 1;
+
+        // Находим все QPlainTextEdit и QSpinBox в контейнерах
+        QList<QPlainTextEdit *> textEdits = page->findChildren<QPlainTextEdit *>();
+        QList<QSpinBox *> spinBoxes = page->findChildren<QSpinBox *>();
+
+        // Проверяем, что количество QPlainTextEdit и QSpinBox одинаково
+        if (textEdits.size() != spinBoxes.size()) {
+            qDebug() << "Ошибка: количество QPlainTextEdit не соответствует количеству QSpinBox";
+            return;
+        }
+
+        // Обрабатываем их параллельно
+        for (int j = 0; j < textEdits.size(); ++j) {
+            QPlainTextEdit *textEdit = textEdits[j];
+            QSpinBox *textSpin = spinBoxes[j];
+
+            // Если оба виджета найдены, обрабатываем их
+            if (textEdit && textSpin) {
+                QString content = textEdit->toPlainText();  // Получаем текст из QPlainTextEdit
+                int spin = textSpin->value();  // Получаем значение из QSpinBox
+
+                // Привязка значений
+                query.bindValue(":page", i);
+                query.bindValue(":field", fieldIndex);
+                query.bindValue(":amount", spin);
+                query.bindValue(":content", content);
+
+                // Выполнение запроса
+                if (!query.exec()) {
+                    qDebug() << "Ошибка сохранения: " << query.lastError().text();
+                }
+
+                fieldIndex++;
+            }
+        }
+    }
+
+    qDebug() << "Данные успешно сохранены!";
+}
 void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6) {//прописать в аргумент что передедаю scrollLayout
     // Проверяем количество виджетов
     if (row >= 80) {

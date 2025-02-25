@@ -15,7 +15,10 @@
 #include <QScrollBar>
 #include <QSpinBox>
 #include <QMap>
-#include <vector>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDir>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -34,6 +37,7 @@ private slots:
     void onButton16Clicked();
     void addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6);
     void switchPage();
+    void on_saveButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -66,8 +70,6 @@ private:
     QVBoxLayout *buttonsLayout;
     QStackedWidget *stackedWidget;
     QMap<QPushButton*, int> buttonToIndex;
-    // QMap<int, std::vector<QPlainTextEdit* ,int>> pair_information;
-    // QMap<QWidget* , std::vector<QMap*, int>> pairs_windows;
     QPushButton *push_button_pairs;
     QScrollArea *page_scroll_area;
     QPushButton *page_button_add;
@@ -81,7 +83,10 @@ private:
     QWidget *firstPage;
     QWidget *scrollWidget_4;
     QVBoxLayout* scrollLayout_4;
-
+    QWidget *container;
+    QPlainTextEdit *textEdit;
+    QSpinBox *textSpin;
+    QList<QWidget *> containers;
 
     int row,col, count=2;
 };
