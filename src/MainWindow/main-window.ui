@@ -3138,7 +3138,7 @@ border-radius: 10px;</string>
               <font>
                <family>Helvetica</family>
                <pointsize>32</pointsize>
-               <fontweight>Medium</fontweight>
+               <weight>50</weight>
               </font>
              </property>
              <property name="layoutDirection">
@@ -3519,7 +3519,7 @@ border-radius: 40px</string>
               <font>
                <family>Helvetica</family>
                <pointsize>32</pointsize>
-               <fontweight>Medium</fontweight>
+               <weight>50</weight>
               </font>
              </property>
              <property name="layoutDirection">
