@@ -87,6 +87,12 @@ private:
     QPlainTextEdit *textEdit;
     QSpinBox *textSpin;
     QList<QWidget *> containers;
+    QString *subject_names;
+    QString *subject_spins;
+    QWidget *page;
+    QStringList subjectList;
+    QStringList amountList;
+
 
     int row,col, count=2;
 };

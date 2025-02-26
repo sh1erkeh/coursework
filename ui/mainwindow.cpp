@@ -45,20 +45,38 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() <<"Ошибка открытия базы данных: "<< db.lastError().text();
         return;
     }
-
     QSqlQuery query;
+
+    QString dropTableQuery = "DROP TABLE IF EXISTS text_data";
+    if (!query.exec(dropTableQuery)) {
+        qDebug() << "Ошибка удаления таблицы: " << query.lastError().text();
+    } else {
+        qDebug() << "Старая таблица text_data успешно удалена!";
+    }
+
     QString createTableQuery =
         "CREATE TABLE IF NOT EXISTS text_data ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "page INTEGER, "
-        "field INTEGER, "
-        "amount INTEGER, "
-        "content TEXT)";
+        "subject_name TEXT,"
+        "amount TEXT)";
+
     if (!query.exec(createTableQuery)) {
         qDebug() <<"Ошибка создания таблицы: " << query.lastError().text();
     }else{
         qDebug() << "База данных успешно инициализирована!";
         qDebug() <<dbPath;
+    }
+    QSqlQuery query1;
+    QString createTableSubjects =
+        "CREATE TABLE IF NOT EXISTS subjects ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "name TEXT UNIQUE)";
+
+    if (!query1.exec(createTableSubjects)) {
+        qDebug() <<"Ошибка создания таблицы: " << query1.lastError().text();
+    }else{
+        qDebug() << "База данных успешно инициализирована!";
     }
 
     //
@@ -194,63 +212,82 @@ void MainWindow::on_saveButton_clicked() {
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query(db);
+    QSqlQuery query1(db);
+    QSqlQuery getIdQuery(db);
 
-    // Очистка таблицы
+    // Очистка таблицы text_data
     if (!query.exec("DELETE FROM text_data")) {
         qDebug() << "Ошибка очистки таблицы" << query.lastError().text();
         return;
     } else {
-        qDebug() << "Таблица успешно очищена";
+        qDebug() << "Таблица text_data успешно очищена";
     }
-
-    // Подготовка запроса с четырьмя параметрами
-    query.prepare("INSERT INTO text_data (page, field, amount, content) VALUES (:page, :field, :amount, :content)");
+    query.clear();
+    query.prepare("INSERT INTO text_data (page, subject_name, amount) VALUES (:page, :subject_name, :amount)");
+    query1.prepare("INSERT INTO subjects (name) VALUES (:name)");
 
     int pageCount = ui->stackedWidget->count();
     for (int i = 0; i < pageCount; ++i) {
         QWidget *page = ui->stackedWidget->widget(i);
-        QList<QWidget *> containers = page->findChildren<QWidget *>();
 
-        int fieldIndex = 1;
-
-        // Находим все QPlainTextEdit и QSpinBox в контейнерах
         QList<QPlainTextEdit *> textEdits = page->findChildren<QPlainTextEdit *>();
         QList<QSpinBox *> spinBoxes = page->findChildren<QSpinBox *>();
 
-        // Проверяем, что количество QPlainTextEdit и QSpinBox одинаково
-        if (textEdits.size() != spinBoxes.size()) {
-            qDebug() << "Ошибка: количество QPlainTextEdit не соответствует количеству QSpinBox";
-            return;
-        }
+        QStringList subjectList;
+        QStringList amountList;
 
-        // Обрабатываем их параллельно
         for (int j = 0; j < textEdits.size(); ++j) {
             QPlainTextEdit *textEdit = textEdits[j];
             QSpinBox *textSpin = spinBoxes[j];
 
-            // Если оба виджета найдены, обрабатываем их
             if (textEdit && textSpin) {
-                QString content = textEdit->toPlainText();  // Получаем текст из QPlainTextEdit
-                int spin = textSpin->value();  // Получаем значение из QSpinBox
+                QString content = textEdit->toPlainText().trimmed();
+                int spin = textSpin->value();
 
-                // Привязка значений
-                query.bindValue(":page", i);
-                query.bindValue(":field", fieldIndex);
-                query.bindValue(":amount", spin);
-                query.bindValue(":content", content);
-
-                // Выполнение запроса
-                if (!query.exec()) {
-                    qDebug() << "Ошибка сохранения: " << query.lastError().text();
+                if (content.isEmpty()) {
+                    qDebug() << "Пропущен пустой предмет";
+                    continue;
                 }
 
-                fieldIndex++;
+                // Проверяем, существует ли предмет в базе
+                getIdQuery.prepare("SELECT id FROM subjects WHERE name = :name");
+                getIdQuery.bindValue(":name", content);
+
+                if (!getIdQuery.exec()) {
+                    qDebug() << "Ошибка поиска предмета: " << getIdQuery.lastError().text();
+                    continue;
+                }
+
+                if (!getIdQuery.next()) {
+                    // Если предмет не найден, добавляем его
+                    query1.bindValue(":name", content);
+                    if (!query1.exec()) {
+                        qDebug() << "Ошибка сохранения предмета: " << query1.lastError().text();
+                        continue;
+                    }
+                }
+
+                // Добавляем в списки для группового сохранения
+                subjectList.append(content);
+                amountList.append(QString::number(spin));
             }
         }
-    }
 
-    qDebug() << "Данные успешно сохранены!";
+        if (!subjectList.isEmpty() && !amountList.isEmpty()) {
+            QString subject_list=subjectList.join(",");
+            QString amount_list = amountList.join(",");
+            query.bindValue(":page", i);
+            query.bindValue(":subject_name", subject_list);
+            query.bindValue(":amount", amount_list);
+
+            if (!query.exec()) {
+                qDebug() << "Ошибка сохранения text_data: " << query.lastError().text();
+            }
+        } else {
+            qDebug() << "Пропущена страница " << i << ", так как нет данных для сохранения.";
+        }
+    }
 }
 void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6) {//прописать в аргумент что передедаю scrollLayout
     // Проверяем количество виджетов
