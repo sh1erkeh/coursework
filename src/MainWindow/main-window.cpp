@@ -12,11 +12,14 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpinBox>
+#include <QApplication>
+#include <QScreen>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(const QString& user_login, QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow), count(2) 
     {
     ui->setupUi(this);
+    this->user_login = user_login;
     
     //обозначение переменных чтобы было более легкое понимание;
     switch_4 = ui->pushButton_4;

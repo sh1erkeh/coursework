@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(const QString& user_login, QWidget *parent = nullptr);
     ~MainWindow();
 private slots:
     void onSwitch4Clicked(const QString &buttonText);
@@ -36,8 +36,9 @@ private slots:
     void onButton16Clicked();
     void addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6);
     void switchPage();
-
 private:
+    QString user_login;
+
     Ui::MainWindow *ui;
     QPushButton *switch_1;
     QPushButton *switch_2;
@@ -68,8 +69,6 @@ private:
     QVBoxLayout *buttonsLayout;
     QStackedWidget *stackedWidget;
     QMap<QPushButton*, int> buttonToIndex;
-    // QMap<int, std::vector<QPlainTextEdit* ,int>> pair_information;
-    // QMap<QWidget* , std::vector<QMap*, int>> pairs_windows;
     QPushButton *push_button_pairs;
     QScrollArea *page_scroll_area;
     QPushButton *page_button_add;
