@@ -1,4 +1,4 @@
-#include "../include/data-fetcher.hpp"
+#include "data-fetcher.h"
 
 #include <QtSql>
 #include <stdexcept>

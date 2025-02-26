@@ -1,5 +1,4 @@
-#include "../include/users-db-handler.hpp"
-#include "../ui/log-window.hpp"
+#include "login-window.h"
 
 #include <QApplication>
 #include <QLocale>

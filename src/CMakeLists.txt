@@ -1,0 +1,4 @@
+add_subdirectory(MainWindow)
+add_subdirectory(DataBaseHandlers)
+add_subdirectory(Utilities)
+add_subdirectory(RegistrationWindow)

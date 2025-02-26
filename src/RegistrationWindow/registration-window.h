@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 
-#include "../include/users-db-handler.hpp"
+#include "usersDB-handler.h"
 
 class RegistrationWindow : public QWidget {
     Q_OBJECT

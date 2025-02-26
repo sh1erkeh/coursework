@@ -1,4 +1,4 @@
-#include "../include/dsatur-util.hpp"
+#include "dsatur-util.h"
 
 ColorChooser::Node::Node(unsigned color, unsigned canBeColored, unsigned areColored)
         : color{color}, canBeColored{canBeColored}, areColored(areColored) 

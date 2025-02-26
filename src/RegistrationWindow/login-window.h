@@ -6,9 +6,9 @@
 #include <QLabel>
 #include <QMessageBox>
 
-#include "reg-window.hpp"
-#include "mainwindow.h"
-#include "../include/users-db-handler.hpp"
+#include "registration-window.h"
+#include "main-window.h"
+#include "usersDB-handler.h"
 
 class LoginWindow : public QWidget {
     Q_OBJECT
@@ -22,14 +22,20 @@ private slots:
     void onLoginClicked() {
         QString login = loginEdit->text();
         QString password = passwordEdit->text();
-
+        
+        bool flag = false;
         try {
-            DatabaseManager::instance().validateUser(login, password);
+            flag = DatabaseManager::instance().validateUser(login, password);
+        } catch (...) {
+            QMessageBox::warning(this, "Login Failed", "Unknown reason");
+        }
+
+        if (flag) {
             MainWindow *mainWindow = new MainWindow();
             mainWindow->show();
             this->close();
-        } catch (...) {
-            QMessageBox::warning(this, "Login Failed", "Invalid login or password.");
+        } else {
+            QMessageBox::warning(this, "Login Failed", "Incorrect login or password.");
         }
     }
 
