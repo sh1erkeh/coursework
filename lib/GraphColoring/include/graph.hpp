@@ -15,10 +15,6 @@ public:
     explicit Graph(size_t numberOfVertices);
     Graph(size_t numberOfVertices, std::vector<std::set<size_t>>& adjacencyList);
 
-    // Graph is too heavy to copy
-    Graph(const Graph&) = delete;
-    Graph& operator=(const Graph&) = delete;
-
     // Add directed edge
     virtual void addEdge(size_t from, size_t to);
 };

@@ -15,12 +15,20 @@
 #include <QScrollBar>
 #include <QSpinBox>
 #include <QMap>
+<<<<<<< HEAD:ui/mainwindow.h
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDir>
+||||||| 7ed7721:ui/mainwindow.h
+#include <vector>
+=======
+
+>>>>>>> main:src/MainWindow/main-window.h
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+    class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -28,7 +36,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(const QString& user_login, QWidget *parent = nullptr);
     ~MainWindow();
 private slots:
     void onSwitch4Clicked(const QString &buttonText);
@@ -37,9 +45,16 @@ private slots:
     void onButton16Clicked();
     void addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6);
     void switchPage();
+<<<<<<< HEAD:ui/mainwindow.h
     void on_saveButton_clicked();
 
+||||||| 7ed7721:ui/mainwindow.h
+
+=======
+>>>>>>> main:src/MainWindow/main-window.h
 private:
+    QString user_login;
+
     Ui::MainWindow *ui;
     QPushButton *switch_1;
     QPushButton *switch_2;

@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "main-window.h"
+#include "ui_main-window.h"
 
 #include <QPushButton>
 #include <QWidget>
@@ -21,13 +21,38 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), count(2)
 {
+||||||| 7ed7721:ui/mainwindow.cpp
+#include <string>
+#include <vector>
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow), count(2)
+{
+=======
+#include <QApplication>
+#include <QScreen>
+
+MainWindow::MainWindow(const QString& user_login, QWidget *parent)
+        : QMainWindow(parent), ui(new Ui::MainWindow), count(2) 
+    {
+>>>>>>> main:src/MainWindow/main-window.cpp
     ui->setupUi(this);
+<<<<<<< HEAD:ui/mainwindow.cpp
+||||||| 7ed7721:ui/mainwindow.cpp
+    //обозначение переменных чтобы было более легкое понимание;
+=======
+    this->user_login = user_login;
+    
+    //обозначение переменных чтобы было более легкое понимание;
+>>>>>>> main:src/MainWindow/main-window.cpp
     switch_4 = ui->pushButton_4;
+    
     ui->widget_5->hide();
     ui->widget_3->show();
     ui->widget_8->show();
     ui->widget_9->hide();
     ui->widget_6->hide();
+<<<<<<< HEAD:ui/mainwindow.cpp
 
     QDir dir;
     QString path = dir.currentPath() + "/database";
@@ -80,6 +105,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     //
+||||||| 7ed7721:ui/mainwindow.cpp
+=======
+    
+>>>>>>> main:src/MainWindow/main-window.cpp
     //устанавливаю разые акценты на свитчах
     switch_4->setStyleSheet("QPushButton {""background-color: rgb(60,60,60);"
                             "border-top-right-radius: 15px;"
@@ -200,8 +229,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 void MainWindow::on_saveButton_clicked() {
@@ -502,8 +530,6 @@ void MainWindow::onButton13Clicked()
 
 }
 
-void MainWindow::onButton16Clicked()
-{
+void MainWindow::onButton16Clicked() {
     close();
-
 }
