@@ -6,6 +6,12 @@
 #include <QLabel>
 #include <QMessageBox>
 
+QT_BEGIN_NAMESPACE
+namespace Ui {
+    class LoginWindow;
+}
+QT_END_NAMESPACE
+
 class LoginWindow : public QWidget {
     Q_OBJECT
 public:
@@ -14,8 +20,5 @@ private slots:
     void onLoginClicked();
     void onRegisterClicked();
 private:
-    void setupUI();
-
-    QLineEdit* loginEdit;
-    QLineEdit* passwordEdit;
+    Ui::LoginWindow* ui;
 };

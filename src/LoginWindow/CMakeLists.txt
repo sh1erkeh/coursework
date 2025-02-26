@@ -1,12 +1,12 @@
-project(RegistrationWindow)
+project(LoginWindow)
 
 set(sources
-    registration-window.cpp
+    login-window.cpp
 )
 
 set(headers
-    registration-window.hpp
-    registration-window.ui
+    login-window.hpp
+    login-window.ui
 )
 
 add_library(${PROJECT_NAME} STATIC)
@@ -26,5 +26,7 @@ target_link_libraries(${PROJECT_NAME}
         Qt6::Widgets
         Qt6::Sql
     PRIVATE
+        MainWindow
+        RegistrationWindow
         DataBaseHandlers
 )

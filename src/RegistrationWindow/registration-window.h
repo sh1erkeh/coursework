@@ -7,6 +7,12 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 
+QT_BEGIN_NAMESPACE
+namespace Ui {
+    class RegistrationWindow;
+}
+QT_END_NAMESPACE
+
 class RegistrationWindow : public QWidget {
     Q_OBJECT
 public:
@@ -14,8 +20,5 @@ public:
 private slots:
     void onRegisterClicked(); 
 private:
-    void setupUI();
-
-    QLineEdit* loginEdit;
-    QLineEdit* passwordEdit;
+    Ui::RegistrationWindow* ui;
 };
