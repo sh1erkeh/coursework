@@ -177,7 +177,8 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::centerWindow(){
-    QScreen *screen = QGuiApplication::primaryScreen();
+    QScreen *screen = QGuiApplication::primaryScreen()
+        ;
     QRect screenGeometry = screen->availableGeometry();
 
     int x = (screenGeometry.width() - width()) / 2;
@@ -256,7 +257,7 @@ void MainWindow::on_saveButton_clicked() {
             }
         }
 
-        if (!subjectList.isEmpty() && !amountList.isEmpty()) {
+        if (!subjectList.isEmpty() && !amountList.isEmpty() || pageCount==2) {
             QString subject_list=subjectList.join(",");
             QString amount_list = amountList.join(",");
             query.bindValue(":page", i);
@@ -396,7 +397,7 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
 
     QStringList groupList;
     groupList.append(buttonText);
-    groupList.append(" группа");
+    groupList.append(" направление");
     QLabel *group_label = new QLabel(groupList.join(""));
     QGridLayout *group_layout = new QGridLayout;
     group_layout->setContentsMargins(0,0,0,0);
