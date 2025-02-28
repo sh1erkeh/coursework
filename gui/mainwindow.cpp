@@ -20,6 +20,10 @@
 #include <QPalette>
 #include <QGraphicsDropShadowEffect>
 #include <QLabel>
+#include <QStyle>
+#include <QApplication>
+#include <QScreen>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -170,6 +174,17 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::centerWindow(){
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+
+    int x = (screenGeometry.width() - width()) / 2;
+    int y = (screenGeometry.height() - height()) / 2;
+
+    // Устанавливаем позицию окна
+    move(x, y);
 }
 void MainWindow::on_saveButton_clicked() {
     QSqlDatabase db = QSqlDatabase::database();

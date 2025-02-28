@@ -22,6 +22,9 @@
 #include <QPalette>
 #include <QGraphicsDropShadowEffect>
 #include <QLabel>
+#include <QStyle>
+#include <QApplication>
+#include <QScreen>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -34,6 +37,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void centerWindow();
 private slots:
     void onSwitch4Clicked(const QString &buttonText);
     void onButton12Clicked();
@@ -42,7 +46,6 @@ private slots:
     void addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6);
     void switchPage();
     void on_saveButton_clicked();
-
 private:
     Ui::MainWindow *ui;
     QPushButton *switch_1;
