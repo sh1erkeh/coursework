@@ -33,60 +33,58 @@
 #include <QApplication>
 #include <QScreen>
 
+
 MainWindow::MainWindow(const QString& login, QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow), count(2), row(0)
-{
+    : QMainWindow(parent), ui(new Ui::MainWindow), count(2), row(0) {
     ui->setupUi(this);
     this->login = login;
+    centerWindow();
 
     ui->widget_5->hide();
     ui->widget_3->show();
     ui->widget_8->show();
     ui->widget_9->hide();
     ui->widget_6->hide();
-    int row=0;
+
+    int row = 0;
+
     QDir dir;
     QString path = dir.currentPath() + "/database";
-
     if (!dir.exists(path)) {
         dir.mkpath(path);
     }
 
     QString dbPath = path + '/' + login + "data.db";
-
-    QSqlDatabase db = QSqlDatabase::addDatabase(("QSQLITE"));
-    db.setDatabaseName(dbPath);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", dbPath);
 
     if (!db.open()){
         qDebug() <<"Ошибка открытия базы данных: "<< db.lastError().text();
         return;
     }
-    QSqlQuery query;
 
+    QSqlQuery query;
     QString createTableQuery =
         "CREATE TABLE IF NOT EXISTS GROUPS ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "amount INT, "
         "name TEXT, "
         "subjects TEXT,"
         "quantities TEXT)";
 
     if (!query.exec(createTableQuery)) {
         qDebug() << "Ошибка создания таблицы: " << query.lastError().text();
-    }else{
+    } else {
         qDebug() << "База данных успешно инициализирована!";
         qDebug() << dbPath;
     }
-    QSqlQuery query1;
+
     QString createTableSubjects =
         "CREATE TABLE IF NOT EXISTS SUBJECTS ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "name TEXT UNIQUE)";
 
-    if (!query1.exec(createTableSubjects)) {
-        qDebug() <<"Ошибка создания таблицы: " << query1.lastError().text();
-    }else{
+    if (!query.exec(createTableSubjects)) {
+        qDebug() << "Ошибка создания таблицы: " << query.lastError().text();
+    } else {
         qDebug() << "База данных успешно инициализирована!";
     }
 
@@ -108,35 +106,38 @@ MainWindow::MainWindow(const QString& login, QWidget *parent)
 
     ui->widget_13->setGraphicsEffect(effect1);
 
-    //беру скролл виджет из гуишки чтобы получить из него лейаут и потом в лейаут пихаю элементы
     QWidget *scrollWidget = ui->scrollArea->widget();
     if (!scrollWidget){
         scrollWidget = new QWidget;
         ui->scrollArea->setWidget(scrollWidget);
         ui->scrollArea->setWidgetResizable(true);
     }
-    //получаю лейаут из скролл виджета
+
     QVBoxLayout* scrollLayout = qobject_cast<QVBoxLayout*>(scrollWidget->layout());
     if (!scrollLayout){
         scrollLayout = new QVBoxLayout(scrollWidget);
         scrollWidget->setLayout(scrollLayout);
     }
     ui->switch_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //создаем спейсер в скролл арея чтобы все элементы сверху были
+
     spacer = new QSpacerItem(20,40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     scrollLayout->addItem(spacer);
+
     QWidget *firstPage = ui->stackedWidget->widget(0);
     QVBoxLayout *layout1 = new QVBoxLayout(firstPage);
     layout1->addWidget(ui->show_8);
     layout1->setContentsMargins(0,0,0,0);
+
     QWidget *firstPage1 = ui->stackedWidget->widget(1);
     QVBoxLayout *layout2 = new QVBoxLayout(firstPage1);
     layout2->setContentsMargins(0,0,0,0);
     layout2->addWidget(ui->show_6);
+
     buttonToIndex[ui->pushButton_4] = 0;
     buttonToIndex[ui->pushButton_17] = 1;
+
     int count = 3;
-    connect(ui->pushButton_5, &QPushButton::clicked, this, [this, count]()mutable {
+    connect(ui->pushButton_5, &QPushButton::clicked, this, [this, count]() mutable {
         onSwitch4Clicked(QString::number(count));
         count++;
     });
@@ -171,12 +172,21 @@ MainWindow::MainWindow(const QString& login, QWidget *parent)
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::switchPage);
     connect(ui->saveButton, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
     connect(ui->pushButton_15, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
-
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::centerWindow() {
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+
+    int x = (screenGeometry.width() - width()) / 2;
+    int y = (screenGeometry.height() - height()) / 2;
+
+    // Устанавливаем позицию окна
+    move(x, y);
 }
 
 void MainWindow::on_saveButton_clicked() {
@@ -191,37 +201,34 @@ void MainWindow::on_saveButton_clicked() {
     QSqlQuery query1(db);
     QSqlQuery getIdQuery(db);
 
-    // Очистка таблицы text_data
     if (!query.exec("DELETE FROM GROUPS")) {
         qDebug() << "Ошибка очистки таблицы" << query.lastError().text();
         return;
     } else {
-        qDebug() << "Таблица text_data успешно очищена";
+        qDebug() << "Таблица GROUPS успешно очищена";
     }
 
     query.clear();
-    query.prepare("INSERT INTO GROUPS (amount, name, subjects, quantities) VALUES (:amount, :name, :subjects, :quantities)");
+    query.prepare("INSERT INTO GROUPS (name, subjects, quantities) VALUES (:name, :subjects, :quantities)");
     query1.prepare("INSERT INTO SUBJECTS (name) VALUES (:name)");
 
-    int amountGroup = 0;
-    int pageCount = ui->stackedWidget->count();
-    for (int i = 0; i + 1 < pageCount; ++i) {
+    int nameCount = ui->stackedWidget->count();
+    for (int i = 0; i < nameCount; ++i) {
+        QWidget *name = ui->stackedWidget->widget(i);
 
-        QWidget *page = ui->stackedWidget->widget(i);
-
-        QList<QPlainTextEdit *> textEdits = page->findChildren<QPlainTextEdit *>();
-        QList<QSpinBox *> spinBoxes = page->findChildren<QSpinBox *>();
+        QList<QPlainTextEdit *> textEdits = name->findChildren<QPlainTextEdit *>();
+        QList<QSpinBox *> spinBoxes = name->findChildren<QSpinBox *>();
 
         QStringList subjectList;
-        QStringList amountList;
+        QStringList quantitiesList;
 
-        amountGroup = spinBoxes[0]->value();
-        qDebug() << amountGroup;
+        for (int j = 0; j < textEdits.size(); ++j) {
+            // if (j == 0) {
+            //     
+            // }
 
-        for (int j = 1; j < textEdits.size(); ++j) {
             QPlainTextEdit *textEdit = textEdits[j];
             QSpinBox *textSpin = spinBoxes[j];
-
 
             if (textEdit && textSpin) {
                 QString content = textEdit->toPlainText().trimmed();
@@ -252,24 +259,19 @@ void MainWindow::on_saveButton_clicked() {
 
                 // Добавляем в списки для группового сохранения
                 subjectList.append(content);
-                amountList.append(QString::number(spin));
+                quantitiesList.append(QString::number(spin));
             }
         }
 
-        if (!subjectList.isEmpty() && !amountList.isEmpty()) {
-            qDebug() << "Decided to write page" << i;
+        if (!subjectList.isEmpty() && !quantitiesList.isEmpty()) {
             QString subject_list=subjectList.join(",");
-            QString amount_list = amountList.join(",");
-            
-            query.bindValue(":amount", amountGroup);
+            QString quantities_list = quantitiesList.join(",");
             query.bindValue(":name", i);
             query.bindValue(":subjects", subject_list);
-            query.bindValue(":quantities", amount_list);
+            query.bindValue(":quantities", quantities_list);
 
             if (!query.exec()) {
-                qDebug() << "Ошибка сохранения text_data: " << query.lastError().text();
-            } else {
-                qDebug() << "Written data to db";
+                qDebug() << "Ошибка сохранения GROUPS: " << query.lastError().text();
             }
         } else {
             qDebug() << "Пропущена страница " << i << ", так как нет данных для сохранения.";
@@ -281,6 +283,7 @@ void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea
     if (row >= 35) {
         return;
     }
+
     QPalette palette;
     palette.setColor(QPalette::Text, Qt::black);
 
@@ -309,9 +312,9 @@ void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea
     spinbox->setMinimumHeight(30);
     spinbox->setMinimumWidth(40);
     spinbox->setStyleSheet(ui->spinBox_3->styleSheet());
-    spinbox->setRange(1,4);
+    spinbox->setRange(1,10);
     spinbox->setPalette(palette);
-    // Устанавливаем layout для нового виджета
+
     QHBoxLayout *newWidgetLayout = new QHBoxLayout(newWidget);
     QSpacerItem *spacer_button= new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
     newWidgetLayout->setContentsMargins(5,5,5,5);
@@ -320,70 +323,23 @@ void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea
     newWidgetLayout->addWidget(textEdit);
     newWidget->setLayout(newWidgetLayout);
     newWidget->setFixedHeight(50);
-    // Добавляем новый виджет в layout scrollWidget
 
     scrollLayout->setSpacing(0);
     scrollLayout->insertWidget(scrollLayout->indexOf(pushButton_6),newWidget);
-
-
     if (checking_label[pushButton_6]==0 && pushButton_6!=ui->pushButton_14){
-
-        QWidget *newWidget1 = new QWidget();
-        newWidget1->setStyleSheet("background-color: rgb(80, 80, 80); border-radius: 15px;");
-
-        // Создаем текстовое поле
-        QPlainTextEdit *textEdit1 = new QPlainTextEdit(newWidget1);
-        textEdit1->setStyleSheet("background-color: rgb(5, 255, 255); border-radius: 10px;color: black; padding:7px");
-        textEdit1->setPlaceholderText("Выберите количество групп");
-        textEdit1->setEnabled(true);
-        textEdit1->setMinimumHeight(40);
-        //создаем виджет для спин бокса
-        QWidget *widget_spinbox1 = new QWidget();
-        widget_spinbox1->setStyleSheet("background-color:rgb(200,200,200); border-radius: 10px;");
-        widget_spinbox1->setFixedSize(50,40);
-
-        //создаем спинбокс и грид для виджета под спинбокс
-        QSpinBox *spinbox1 = new QSpinBox;
-        QHBoxLayout *widget_spinbox_layout1 = new QHBoxLayout(widget_spinbox1);
-        widget_spinbox_layout1->addWidget(spinbox1);
-        widget_spinbox1->setLayout(widget_spinbox_layout1);
-        widget_spinbox_layout1->setContentsMargins(7,0,3,0);
-
-        spinbox1->setMinimumHeight(30);
-        spinbox1->setMinimumWidth(40);
-        spinbox1->setStyleSheet(ui->spinBox_3->styleSheet());
-        spinbox1->setRange(1,10);
-        spinbox1->setPalette(palette);
-        // Устанавливаем layout для нового виджета
-        QHBoxLayout *newWidgetLayout1 = new QHBoxLayout(newWidget1);
-        QSpacerItem *spacer_button1= new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
-        newWidgetLayout1->setContentsMargins(5,5,5,5);
-        newWidgetLayout1->setSpacing(20);
-        newWidgetLayout1->addWidget(widget_spinbox1);
-        newWidgetLayout1->addWidget(textEdit1);
-        newWidget1->setLayout(newWidgetLayout1);
-        newWidget1->setFixedHeight(50);
-        // Добавляем новый виджет в layout scrollWidget
-
-        scrollLayout->setSpacing(0);
-        scrollLayout->insertWidget(scrollLayout->indexOf(newWidget),newWidget1);
-        scrollLayout->insertItem(scrollLayout->indexOf(newWidget),spacer_button1);
-
-
-
         QWidget *widget_tip = new QWidget;
         widget_tip->setFixedHeight(30);
         QSpacerItem *gap = new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Minimum);
         QSpacerItem *gap1 = new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
-        QLabel *amount = new QLabel("Кол-во");
-        amount->setStyleSheet("color:rgb(120,120,120);");
+        QLabel *quantities = new QLabel("Кол-во");
+        quantities->setStyleSheet("color:rgb(120,120,120);");
         QLabel *pairs = new QLabel("Название предмета");
         QHBoxLayout *tip_layout = new QHBoxLayout;
         pairs->setStyleSheet("color:rgb(120,120,120);");
 
         tip_layout->setContentsMargins(4,5,4,0);
         // tip_layout->addItem(gap);
-        tip_layout->addWidget(amount);
+        tip_layout->addWidget(quantities);
         tip_layout->addItem(gap1);
         tip_layout->addWidget(pairs);
         tip_layout->addItem(gap);
@@ -403,12 +359,14 @@ void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea
     scrollArea->verticalScrollBar()->setValue(scrollArea->verticalScrollBar()->maximum());
 }
 // Слот для кнопки switch_4
-void MainWindow::onSwitch4Clicked(const QString &buttonText)//получается мне надо при создании page в основном экране также создавать page_alter с с пустями колонками пар
-//во втором окне
-{   if (count>=80){
-        return;}
+void MainWindow::onSwitch4Clicked(const QString &buttonText) {
+    if (count >= 80) {
+        return;
+    }
+
     row = 0;
     //создаю новую кнопку
+    
     QPushButton *new_switch = new QPushButton(buttonText);
     new_switch->setStyleSheet("QPushButton {""background-color: rgb(40,40,40);"
                          "border-top-right-radius: 15px;"
@@ -427,12 +385,12 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
 
     QWidget *original = ui->show_8; // Исходный виджет
     QWidget *group = new QWidget;
-    QWidget *page = new QWidget(); // Создаём копию
+    QWidget *name = new QWidget(); // Создаём копию
 
     // Копируем свойства
-    page->setGeometry(original->geometry());
-    page->setStyleSheet(original->styleSheet());
-    ui->stackedWidget->addWidget(page);
+    name->setGeometry(original->geometry());
+    name->setStyleSheet(original->styleSheet());
+    ui->stackedWidget->addWidget(name);
 
     QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
     effect->setBlurRadius(10);
@@ -444,35 +402,35 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
     group->setGraphicsEffect(effect);
     group->setStyleSheet(ui->widget_13->styleSheet());
 
-
     QStringList groupList;
     groupList.append(buttonText);
-    groupList.append(" направление");
+    groupList.append(" группа");
+
     QLabel *group_label = new QLabel(groupList.join(""));
     QGridLayout *group_layout = new QGridLayout;
     group_layout->setContentsMargins(0,0,0,0);
     group_layout->addWidget(group_label);
     group_layout->setAlignment(Qt::AlignCenter);
     group->setLayout(group_layout);
-    //Теперь братик page создан и я постараюсь в него впихнуть здесь дочерние элементы по типу push_button и plaintextedit, scroll layout еще
-    QScrollArea *page_scroll_area  = new QScrollArea;
-    QPushButton *page_button_add = new QPushButton("Добавить пару");
-    QPushButton *page_button_save = new QPushButton("Сохранить");
 
-    QWidget *page_scrollWidget = page_scroll_area->widget();
-    if (!page_scrollWidget){
-        page_scrollWidget = new QWidget;
-        page_scroll_area->setWidget(page_scrollWidget);
-        page_scroll_area->setWidgetResizable(true);
+    QScrollArea *name_scroll_area  = new QScrollArea;
+    QPushButton *name_button_add = new QPushButton("Добавить пару");
+    QPushButton *name_button_save = new QPushButton("Сохранить");
+
+    QWidget *name_scrollWidget = name_scroll_area->widget();
+    if (!name_scrollWidget){
+        name_scrollWidget = new QWidget;
+        name_scroll_area->setWidget(name_scrollWidget);
+        name_scroll_area->setWidgetResizable(true);
     }
-    page_scroll_area->setParent(page);
-    page_scroll_area->setWidgetResizable(true);
-    page_scroll_area->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    page_scroll_area->setStyleSheet(ui->scrollArea_3->styleSheet());
-    page_scroll_area->setGeometry(ui->scrollArea_3->geometry());
 
+    name_scroll_area->setParent(name);
+    name_scroll_area->setWidgetResizable(true);
+    name_scroll_area->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    name_scroll_area->setStyleSheet(ui->scrollArea_3->styleSheet());
+    name_scroll_area->setGeometry(ui->scrollArea_3->geometry());
 
-    page_scroll_area->setStyleSheet(
+    name_scroll_area->setStyleSheet(
         "QScrollBar:vertical {"
         "    border: none;"
         "    background: #2E2E2E;"
@@ -493,53 +451,53 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
         "    background: none;"
         "}");
 
-    QGridLayout *page_vertical_layout = qobject_cast<QGridLayout*>(page->layout());
-    if (!page_vertical_layout){
-        page_vertical_layout = new QGridLayout(page);
-        page->setLayout(page_vertical_layout);
+    QGridLayout *name_vertical_layout = qobject_cast<QGridLayout*>(name->layout());
+    if (!name_vertical_layout){
+        name_vertical_layout = new QGridLayout(name);
+        name->setLayout(name_vertical_layout);
     }
-    page_vertical_layout->addWidget(page_scroll_area);
-    page_vertical_layout->setContentsMargins(20,20,20,20);
+    name_vertical_layout->addWidget(name_scroll_area);
+    name_vertical_layout->setContentsMargins(20,20,20,20);
     //получаю лейаут из скролл виджета
-    QVBoxLayout *page_layout = qobject_cast<QVBoxLayout*>(page_scrollWidget->layout());
-    if (!page_layout){
-        page_layout = new QVBoxLayout(page_scrollWidget);
-        page_scrollWidget->setLayout(page_layout);
+    QVBoxLayout *name_layout = qobject_cast<QVBoxLayout*>(name_scrollWidget->layout());
+    if (!name_layout){
+        name_layout = new QVBoxLayout(name_scrollWidget);
+        name_scrollWidget->setLayout(name_layout);
     }
 
-    page_button_add->setFixedHeight(40);
-    page_button_add->setStyleSheet(ui->pushButton_14->styleSheet());
-    page_button_save->setFixedHeight(30);
-    page_button_save->setStyleSheet(ui->saveButton->styleSheet());
+    name_button_add->setFixedHeight(40);
+    name_button_add->setStyleSheet(ui->pushButton_14->styleSheet());
+    name_button_save->setFixedHeight(30);
+    name_button_save->setStyleSheet(ui->saveButton->styleSheet());
 
     QSpacerItem *spacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Minimum);
-    page_layout->addItem(spacer);
-    page_layout->setContentsMargins(12,12,12,12);
-    page_layout->addWidget(group);
-    page_layout->addWidget(page_button_add);
+    name_layout->addItem(spacer);
+    name_layout->setContentsMargins(12,12,12,12);
+    name_layout->addWidget(group);
+    name_layout->addWidget(name_button_add);
     QSpacerItem *spacer2 = new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
-    page_layout->addItem(spacer2);
-    page_layout->addWidget(page_button_save);
+    name_layout->addItem(spacer2);
+    name_layout->addWidget(name_button_save);
     QSpacerItem *spacer3 = new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Expanding);
-    page_layout->addItem(spacer3);
-    page_scroll_area->verticalScrollBar()->setValue(page_scroll_area->verticalScrollBar()->maximum());
-    ui->stackedWidget->addWidget(page);
-    //добавляю скролл area для page
-    int index = ui->stackedWidget->indexOf(page);
+    name_layout->addItem(spacer3);
+    name_scroll_area->verticalScrollBar()->setValue(name_scroll_area->verticalScrollBar()->maximum());
+    ui->stackedWidget->addWidget(name);
+    //добавляю скролл area для name
+    int index = ui->stackedWidget->indexOf(name);
     buttonToIndex[new_switch] = index;
     qDebug()<<index;
-    page->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    name->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QHBoxLayout *switch_layout = qobject_cast<QHBoxLayout*>(switch_scroll_widget->layout());
     switch_layout->insertWidget(switch_layout->indexOf(ui->pushButton_5), new_switch);
     (count)++;
 
     connect(new_switch, &QPushButton::clicked, this, &MainWindow::switchPage);
 
-    connect(page_button_add, &QPushButton::clicked, this, [this, page_layout, page_scroll_area, page_button_add]() {
-        addNewWidget(page_layout, page_scroll_area, page_button_add);
+    connect(name_button_add, &QPushButton::clicked, this, [this, name_layout, name_scroll_area, name_button_add]() {
+        addNewWidget(name_layout, name_scroll_area, name_button_add);
     });
 
-    connect(page_button_save, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
+    connect(name_button_save, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
 
 }
 
@@ -551,34 +509,25 @@ void MainWindow::switchPage(){
         ui->stackedWidget->setCurrentIndex(index);
     }
 }
-// Метод для скрытия всех виджетов
-void MainWindow::onButton12Clicked()
-{
-    // ui->widget->hide();
-    // ui->widget_5->show();
-    // ui->widget_3->hide();
-    // ui->widget_8->hide();
-    // ui->widget_9->show();
-    // ui->widget_6->show();
+
+void MainWindow::onButton12Clicked() {
     QVector<Event> events = fetchEvents(login);
     clrAlgo::UndirectedGraph graph = constructGraph(events);
     std::vector<unsigned> coloring = clrAlgo::DSaturation<ColorChooser>(graph);
     clrAlgo::tabuSearch<ObjectiveFunction, GetNeighbours>(graph, coloring, 1000, 10);
     printEvents(events, coloring); 
 }
-void MainWindow::onButton13Clicked()
-{
+
+void MainWindow::onButton13Clicked() {
     ui->widget->show();
     ui->widget_5->hide();
     ui->widget_3->show();
     ui->widget_8->show();
     ui->widget_9->hide();
     ui->widget_6->hide();
-
 }
 
-void MainWindow::onButton16Clicked()
-{
+void MainWindow::onButton16Clicked() {
     close();
 
 }
