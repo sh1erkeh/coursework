@@ -1,5 +1,5 @@
-#include "main-window.h"
-#include "ui_main-window.h"
+#include "mainwindow.h"
+#include "./ui_mainwindow.h"
 
 #include <QPushButton>
 #include <QWidget>
@@ -17,19 +17,21 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QDir>
-MainWindow::MainWindow(const QString& user_login, QWidget *parent)
+#include <QPalette>
+#include <QGraphicsDropShadowEffect>
+#include <QLabel>
+
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), count(2)
+    , ui(new Ui::MainWindow), count(2), row(0)
 {
-    this->user_login = user_login;
     ui->setupUi(this);
-    switch_4 = ui->pushButton_4;
     ui->widget_5->hide();
     ui->widget_3->show();
     ui->widget_8->show();
     ui->widget_9->hide();
     ui->widget_6->hide();
-
+    int row=0;
     QDir dir;
     QString path = dir.currentPath() + "/database";
 
@@ -80,64 +82,25 @@ MainWindow::MainWindow(const QString& user_login, QWidget *parent)
         qDebug() << "База данных успешно инициализирована!";
     }
 
-    //
-    //устанавливаю разые акценты на свитчах
-    switch_4->setStyleSheet("QPushButton {""background-color: rgb(60,60,60);"
-                            "border-top-right-radius: 15px;"
-                            "border-top-left-radius: 15px;""}");
-    //слайд бар стиль
-    ui->scrollArea->setStyleSheet(
-        "QScrollBar:vertical {"
-        "    border: none;"
-        "    background: #2E2E2E;"
-        "    width: 10px;"
-        "    margin: 0px 0px 0px 0px;"
-        "}"
-        "QScrollBar::handle:vertical {"
-        "    background: #555555;"
-        "    min-height: 20px;"
-        "    border-radius: 5px;"
-        "}"
-        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
-        "    border: none;"
-        "    background: none;"
-        "    height: 0px;"
-        "}"
-        "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {"
-        "    background: none;"
-        "}"
-        );
-    ui->switch_area->setStyleSheet(
-        "QScrollBar:horizontal {"
-        "    border: none;"
-        "    border-radius: 5px;"
-        "    background: #2E2E2E;"
-        "    height: 10px;"
-        "    margin: 0px 0px 0px 0px;"
-        "}"
-        "QScrollBar::handle:horizontal {"
-        "    background: #5A5A5A;"
-        "    border-radius: 5px;"
-        "    min-width: 20px;"
-        "}"
-        "QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {"
-        "    background: none;"
-        "    width: 0px;"
-        "}"
-        "QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {"
-        "    background: none;"
-        "}"
-        "QScrollBar::handle:horizontal:hover {"
-        "    background: #777777;"
-        "}"
-        "QScrollBar::handle:horizontal:pressed {"
-        "    background: #AAAAAA;"
-        "}"
-        );
+
     //связываю свитчи с переключением окна
     connect(ui->pushButton_12, &QPushButton::clicked, this, &MainWindow::onButton12Clicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onButton13Clicked);
     connect(ui->pushButton_16, &QPushButton::clicked, this, &MainWindow::onButton16Clicked);
+
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(10);
+    effect->setOffset(0);
+    effect->setColor(QColor(0,0,0,100));
+    ui->widget_20->setGraphicsEffect(effect);
+
+    QGraphicsDropShadowEffect *effect1 = new QGraphicsDropShadowEffect;
+    effect1->setBlurRadius(10);
+    effect1->setOffset(0);
+    effect1->setColor(QColor(0,0,0,100));
+
+    ui->widget_13->setGraphicsEffect(effect1);
+
     //беру скролл виджет из гуишки чтобы получить из него лейаут и потом в лейаут пихаю элементы
     QWidget *scrollWidget = ui->scrollArea->widget();
     if (!scrollWidget){
@@ -151,7 +114,6 @@ MainWindow::MainWindow(const QString& user_login, QWidget *parent)
         scrollLayout = new QVBoxLayout(scrollWidget);
         scrollWidget->setLayout(scrollLayout);
     }
-    ui->switch_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->switch_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //создаем спейсер в скролл арея чтобы все элементы сверху были
     spacer = new QSpacerItem(20,40, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -188,7 +150,10 @@ MainWindow::MainWindow(const QString& user_login, QWidget *parent)
     spacer_4 = new QSpacerItem(20,40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     scrollLayout_4->addItem(spacer_4);
 
+    ui->switch_area->horizontalScrollBar()->setValue(ui->switch_area->horizontalScrollBar()->maximum());
 
+    ui->scrollArea_3->verticalScrollBar()->setValue(ui->scrollArea_3->verticalScrollBar()->maximum());
+    ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
     connect(ui->pushButton_6, &QPushButton::clicked, this, [this, scrollLayout]() {
         addNewWidget(scrollLayout, this->ui->scrollArea, this->ui->pushButton_6);
     });
@@ -198,6 +163,7 @@ MainWindow::MainWindow(const QString& user_login, QWidget *parent)
     connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::switchPage);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::switchPage);
     connect(ui->saveButton, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
+    connect(ui->pushButton_15, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
 
 }
 
@@ -290,11 +256,13 @@ void MainWindow::on_saveButton_clicked() {
         }
     }
 }
-void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6) {//прописать в аргумент что передедаю scrollLayout
-    // Проверяем количество виджетов
-    if (row >= 80) {
-        return; // Если виджетов больше 80, не добавляем новые
+void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea, QPushButton *pushButton_6) {
+
+    if (row >= 35) {
+        return;
     }
+    QPalette palette;
+    palette.setColor(QPalette::Text, Qt::black);
 
     // Создаем новый виджет
     QWidget *newWidget = new QWidget();
@@ -302,9 +270,10 @@ void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea
 
     // Создаем текстовое поле
     QPlainTextEdit *textEdit = new QPlainTextEdit(newWidget);
-    textEdit->setStyleSheet("background-color: rgb(255, 255, 255); border-radius: 10px;");
-    textEdit->setMinimumHeight(40);
+    textEdit->setStyleSheet("background-color: rgb(255, 255, 255); border-radius: 10px;color: black; padding:7px");
 
+
+    textEdit->setMinimumHeight(40);
     //создаем виджет для спин бокса
     QWidget *widget_spinbox = new QWidget();
     widget_spinbox->setStyleSheet("background-color:rgb(200,200,200); border-radius: 10px;");
@@ -315,42 +284,52 @@ void MainWindow::addNewWidget(QVBoxLayout *scrollLayout, QScrollArea *scrollArea
     QHBoxLayout *widget_spinbox_layout = new QHBoxLayout(widget_spinbox);
     widget_spinbox_layout->addWidget(spinbox);
     widget_spinbox->setLayout(widget_spinbox_layout);
-    widget_spinbox_layout->setContentsMargins(10,0,3,0);
+    widget_spinbox_layout->setContentsMargins(7,0,3,0);
 
-    spinbox->setMinimumHeight(24);
-    spinbox->setMinimumWidth(35);
-    spinbox->setStyleSheet("QSpinBox::up-button{background-color:rgb(37,125,239);border-radius: 5px;width: 20px;height:12px;}"
-        "QSpinBox::down-button{"
-        "background-color:rgb(37,125,239);"
-        "border-radius: 5px;"
-        "width: 20px;"
-        "height:12px;}"
-        "QSpinBox::down-arrow{"
-        "image:url(:/new/prefix1/arrow.png);"
-        "width: 5px;"
-        "height: 5px;}"
-        "QSpinBox::up-arrow{"
-        "image:url(:/new/prefix1/arrow_up.png);"
-        "width: 5px;"
-        "height: 5px;}"
-        "QSpinBox::base{"
-        "background-color: rgb(40,40,40);"
-        "border-radius: 5px;}"
-        "QSpinBox {color: black;}");
+    spinbox->setMinimumHeight(30);
+    spinbox->setMinimumWidth(40);
+    spinbox->setStyleSheet(ui->spinBox_3->styleSheet());
     spinbox->setRange(1,4);
-
+    spinbox->setPalette(palette);
     // Устанавливаем layout для нового виджета
     QHBoxLayout *newWidgetLayout = new QHBoxLayout(newWidget);
+    QSpacerItem *spacer_button= new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
+    newWidgetLayout->setContentsMargins(5,5,5,5);
+    newWidgetLayout->setSpacing(20);
     newWidgetLayout->addWidget(widget_spinbox);
     newWidgetLayout->addWidget(textEdit);
     newWidget->setLayout(newWidgetLayout);
     newWidget->setFixedHeight(50);
-    newWidgetLayout->setContentsMargins(5,5,5,5);
-    newWidgetLayout->setSpacing(20);
     // Добавляем новый виджет в layout scrollWidget
-    scrollLayout->insertWidget(scrollLayout->indexOf(pushButton_6),newWidget);
 
+    scrollLayout->setSpacing(0);
+    scrollLayout->insertWidget(scrollLayout->indexOf(pushButton_6),newWidget);
+    if (checking_label[pushButton_6]==0 && pushButton_6!=ui->pushButton_14){
+        QWidget *widget_tip = new QWidget;
+        widget_tip->setFixedHeight(30);
+        QSpacerItem *gap = new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        QSpacerItem *gap1 = new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
+        QLabel *amount = new QLabel("Кол-во");
+        amount->setStyleSheet("color:rgb(120,120,120);");
+        QLabel *pairs = new QLabel("Название предмета");
+        QHBoxLayout *tip_layout = new QHBoxLayout;
+        pairs->setStyleSheet("color:rgb(120,120,120);");
+
+        tip_layout->setContentsMargins(4,5,4,0);
+        // tip_layout->addItem(gap);
+        tip_layout->addWidget(amount);
+        tip_layout->addItem(gap1);
+        tip_layout->addWidget(pairs);
+        tip_layout->addItem(gap);
+        widget_tip->setLayout(tip_layout);
+
+        checking_label[pushButton_6]=1;
+
+        scrollLayout->insertWidget(scrollLayout->indexOf(newWidget), widget_tip);
+    }
+    scrollLayout->insertItem(scrollLayout->indexOf(pushButton_6),spacer_button);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
     // Увеличиваем количество виджетов
     row++;
 
@@ -362,7 +341,7 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
 //во втором окне
 {   if (count>=80){
         return;}
-
+    row = 0;
     //создаю новую кнопку
     QPushButton *new_switch = new QPushButton(buttonText);
     new_switch->setStyleSheet("QPushButton {""background-color: rgb(40,40,40);"
@@ -380,8 +359,8 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
         ui->switch_area->setWidgetResizable(true);
     }
 
-
     QWidget *original = ui->show_8; // Исходный виджет
+    QWidget *group = new QWidget;
     QWidget *page = new QWidget(); // Создаём копию
 
     // Копируем свойства
@@ -389,9 +368,30 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
     page->setStyleSheet(original->styleSheet());
     ui->stackedWidget->addWidget(page);
 
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(10);
+    effect->setOffset(0);
+    effect->setColor(QColor(0,0,0,100));
+
+    group->setFixedSize(100,30);
+    group->setContentsMargins(0,0,0,0);
+    group->setGraphicsEffect(effect);
+    group->setStyleSheet(ui->widget_13->styleSheet());
+
+
+    QStringList groupList;
+    groupList.append(buttonText);
+    groupList.append(" группа");
+    QLabel *group_label = new QLabel(groupList.join(""));
+    QGridLayout *group_layout = new QGridLayout;
+    group_layout->setContentsMargins(0,0,0,0);
+    group_layout->addWidget(group_label);
+    group_layout->setAlignment(Qt::AlignCenter);
+    group->setLayout(group_layout);
     //Теперь братик page создан и я постараюсь в него впихнуть здесь дочерние элементы по типу push_button и plaintextedit, scroll layout еще
     QScrollArea *page_scroll_area  = new QScrollArea;
-    QPushButton *page_button_add = new QPushButton("Добавить предмет");
+    QPushButton *page_button_add = new QPushButton("Добавить пару");
+    QPushButton *page_button_save = new QPushButton("Сохранить");
 
     QWidget *page_scrollWidget = page_scroll_area->widget();
     if (!page_scrollWidget){
@@ -427,13 +427,13 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
         "    background: none;"
         "}");
 
-
-    QVBoxLayout *page_vertical_layout = qobject_cast<QVBoxLayout*>(page->layout());
+    QGridLayout *page_vertical_layout = qobject_cast<QGridLayout*>(page->layout());
     if (!page_vertical_layout){
-        page_vertical_layout = new QVBoxLayout(page);
+        page_vertical_layout = new QGridLayout(page);
         page->setLayout(page_vertical_layout);
     }
     page_vertical_layout->addWidget(page_scroll_area);
+    page_vertical_layout->setContentsMargins(20,20,20,20);
     //получаю лейаут из скролл виджета
     QVBoxLayout *page_layout = qobject_cast<QVBoxLayout*>(page_scrollWidget->layout());
     if (!page_layout){
@@ -441,16 +441,21 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
         page_scrollWidget->setLayout(page_layout);
     }
 
-    page_button_add->setFixedHeight(50);
+    page_button_add->setFixedHeight(40);
     page_button_add->setStyleSheet(ui->pushButton_14->styleSheet());
+    page_button_save->setFixedHeight(30);
+    page_button_save->setStyleSheet(ui->saveButton->styleSheet());
 
-    QSpacerItem *spacer = new QSpacerItem(12,12, QSizePolicy::Minimum, QSizePolicy::Minimum);
+    QSpacerItem *spacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Minimum);
     page_layout->addItem(spacer);
+    page_layout->setContentsMargins(12,12,12,12);
+    page_layout->addWidget(group);
     page_layout->addWidget(page_button_add);
-    QSpacerItem *spacer2 = new QSpacerItem(20,40, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QSpacerItem *spacer2 = new QSpacerItem(10,10, QSizePolicy::Minimum, QSizePolicy::Minimum);
     page_layout->addItem(spacer2);
-    page_scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    page_scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    page_layout->addWidget(page_button_save);
+    QSpacerItem *spacer3 = new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    page_layout->addItem(spacer3);
     page_scroll_area->verticalScrollBar()->setValue(page_scroll_area->verticalScrollBar()->maximum());
     ui->stackedWidget->addWidget(page);
     //добавляю скролл area для page
@@ -459,19 +464,17 @@ void MainWindow::onSwitch4Clicked(const QString &buttonText)//получаетс
     qDebug()<<index;
     page->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QHBoxLayout *switch_layout = qobject_cast<QHBoxLayout*>(switch_scroll_widget->layout());
-    spacer_switch = new QSpacerItem(20,10, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    switch_layout->addItem(spacer_switch);
     switch_layout->insertWidget(switch_layout->indexOf(ui->pushButton_5), new_switch);
     (count)++;
-
-    ui->plainTextEdit->setEnabled(true);
-    ui->plainTextEdit->setFocus();
 
     connect(new_switch, &QPushButton::clicked, this, &MainWindow::switchPage);
 
     connect(page_button_add, &QPushButton::clicked, this, [this, page_layout, page_scroll_area, page_button_add]() {
         addNewWidget(page_layout, page_scroll_area, page_button_add);
     });
+
+    connect(page_button_save, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
+
 }
 
 void MainWindow::switchPage(){

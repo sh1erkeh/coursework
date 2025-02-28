@@ -19,6 +19,9 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDir>
+#include <QPalette>
+#include <QGraphicsDropShadowEffect>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,7 +32,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(const QString& user_login, QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private slots:
     void onSwitch4Clicked(const QString &buttonText);
@@ -42,8 +45,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QString user_login;
-
     QPushButton *switch_1;
     QPushButton *switch_2;
     QPushButton *switch_3;
@@ -73,6 +74,7 @@ private:
     QVBoxLayout *buttonsLayout;
     QStackedWidget *stackedWidget;
     QMap<QPushButton*, int> buttonToIndex;
+    QMap<QPushButton*, int> checking_label;
     QPushButton *push_button_pairs;
     QScrollArea *page_scroll_area;
     QPushButton *page_button_add;
@@ -95,9 +97,24 @@ private:
     QWidget *page;
     QStringList subjectList;
     QStringList amountList;
+    QPalette *palette;
+    QPushButton *page_button_save;
+    QGraphicsDropShadowEffect *effect;
+    QWidget *group;
+    QGridLayout *group_layout;
+    QLabel *group_label;
+    QGraphicsDropShadowEffect *effect1;
+    QSpacerItem *spacer_button;
+    QWidget *widget_tip;
+    QLabel *amount;
+    QLabel *pairs;
+    QHBoxLayout *tip_layout;
+    QSpacerItem *gap;
+    QSpacerItem *gap1;
+    QSpacerItem *spacer3;
 
 
-    int row,col, count=2;
+    int row=0,col, count=2;
 };
 
 #endif // MAINWINDOW_H
