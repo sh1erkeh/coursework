@@ -96,5 +96,6 @@ clrAlgo::UndirectedGraph constructGraph(const QVector<Event>& events) {
         }
     }
 
+    std::cout << "constructed graph\n";
     return graph;
 }
