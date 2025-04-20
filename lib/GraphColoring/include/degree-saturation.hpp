@@ -1,20 +1,19 @@
 #pragma once
 
-#include "graph.hpp"
-
 #include <vector>
+
+#include "graph.hpp"
 
 namespace clrAlgo {
 
-
-template<typename ColorChooser>
-std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
+template <typename ColorChooser>
+auto DSaturation(UndirectedGraph& graph) -> std::vector<unsigned> {
     // TODO: check template parameters
 
     // Stores information about each vertex
     struct Node {
         size_t index;
-        
+
         // Number of different colors among neighbours
         size_t saturationDegree;
 
@@ -23,12 +22,14 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
 
         Node() = default;
         Node(size_t index, size_t saturationDegree, size_t uncoloredDegree)
-                : index{index}, saturationDegree{saturationDegree}, uncoloredDegree{uncoloredDegree}
-            {}
+            : index{index},
+              saturationDegree{saturationDegree},
+              uncoloredDegree{uncoloredDegree} {}
 
-        bool operator<(const Node& rhs) const {
-            return std::tie(saturationDegree, uncoloredDegree, index)
-                 > std::tie(rhs.saturationDegree, rhs.uncoloredDegree, rhs.index);
+        auto operator<(const Node& rhs) const -> bool {
+            return std::tie(saturationDegree, uncoloredDegree, index) >
+                   std::tie(rhs.saturationDegree, rhs.uncoloredDegree,
+                            rhs.index);
         }
     };
 
@@ -37,15 +38,15 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
 
     // Number of uncolored neighbours of each vertex
     std::vector<size_t> uncoloredDegree(graph.numberOfVertices);
-    
+
     // Set of adjacent colors for each vertex
     // Potential std::bad_alloc
     std::vector<std::set<unsigned>> adjacentColors(graph.numberOfVertices);
- 
-    // Priority queue for finding minimal vertex
-    std::set<Node> queue; 
 
-    // Stores additional information needed to determine color 
+    // Priority queue for finding minimal vertex
+    std::set<Node> queue;
+
+    // Stores additional information needed to determine color
     ColorChooser chooser(graph.numberOfVertices);
 
     // Add vertices to queue
@@ -53,7 +54,7 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
         uncoloredDegree[vertex] = graph.adjacencyList[vertex].size();
         queue.insert(Node{vertex, 0, uncoloredDegree[vertex]});
     }
- 
+
     while (!queue.empty()) {
         // Extract minimal vertex
         size_t vertex = (*queue.begin()).index;
@@ -64,17 +65,19 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
 
         // Update neighbours' data
         for (size_t neighbour : graph.adjacencyList[vertex]) {
-            // If neighbour is already colored we don't need to update its data  
+            // If neighbour is already colored we don't need to update its data
             if (color[neighbour] == 0) {
                 // Delete old data
-                queue.erase(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
+                queue.erase(Node{neighbour, adjacentColors[neighbour].size(),
+                                 uncoloredDegree[neighbour]});
 
                 // Update data
                 adjacentColors[neighbour].insert(color[vertex]);
                 uncoloredDegree[neighbour]--;
 
                 // Insert updated data
-                queue.insert(Node{neighbour, adjacentColors[neighbour].size(), uncoloredDegree[neighbour]});
+                queue.insert(Node{neighbour, adjacentColors[neighbour].size(),
+                                  uncoloredDegree[neighbour]});
             }
         }
     }
@@ -82,5 +85,4 @@ std::vector<unsigned> DSaturation(UndirectedGraph& graph) {
     return color;
 }
 
-
-}
+}  // namespace clrAlgo

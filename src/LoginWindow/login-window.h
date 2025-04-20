@@ -1,24 +1,25 @@
 #pragma once
 
-#include <QWidget>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-    class LoginWindow;
+class LoginWindow;
 }
 QT_END_NAMESPACE
 
 class LoginWindow : public QWidget {
     Q_OBJECT
 public:
-    LoginWindow(QWidget* parent=nullptr);
+    explicit LoginWindow(QWidget* parent = nullptr);
 private slots:
     void onLoginClicked();
     void onRegisterClicked();
+
 private:
     Ui::LoginWindow* ui;
 };

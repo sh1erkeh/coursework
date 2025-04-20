@@ -1,0 +1,99 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{enumitem}
+
+\geometry{left=3cm, right=2cm, top=2cm, bottom=2cm}
+
+\title{Теория графов и хроматические числа в контексте задачи составления расписания}
+\author{Андреев Александр Сергеевич, Чапайкин Арсений Георгиевич, группа БИВ242}
+\date{Москва 2025}
+
+\begin{document}
+
+\maketitle
+
+\section*{Техническое задание}
+
+\subsection*{1. Формулировка задания}
+Разработать программу, которая позволит оптимизировать составление расписания при помощи метода хроматических многочленов.
+
+\subsection*{2. Требования к ПО}
+\begin{itemize}
+    \item Формирование расписания на основе введённых данных
+    \item Автоматическое построение оптимального расписания
+    \item Поддержка различных типов расписаний
+    \item Ввод и редактирование данных
+    \item Управление ограничениями
+    \item Оптимизация расписания
+    \item Просмотр и визуализация расписания
+\end{itemize}
+
+\subsection*{3. Пользовательский интерфейс}
+\begin{itemize}
+    \item Удобный и интуитивно понятный интерфейс
+    \item Графическая визуализация графов
+    \item Интерактивные элементы для ввода данных
+\end{itemize}
+
+\section*{Введение}
+Теория графов является одной из наиболее динамично развивающихся областей математики и информатики...
+
+\section*{Обзор аналогов}
+\begin{itemize}
+    \item Google Calendar
+    \item Microsoft Outlook
+    \item Trello
+    \item Asana
+\end{itemize}
+
+\section*{Описание выбора программных средств}
+Для разработки выбраны:
+\begin{itemize}
+    \item Язык программирования C++
+    \item Qt Framework (версия 6)
+    \item Система сборки CMake
+    \item Среда разработки Qt Creator
+\end{itemize}
+
+\section*{Описание алгоритма}
+\subsection*{Алгоритм DSatur}
+\begin{enumerate}
+    \item Инициализация:
+    \begin{itemize}
+        \item Для каждой вершины $v \in V$:
+        \item $color(v) = NULL$
+        \item $sat(v) = 0$
+        \item Вычислить $deg(v)$
+    \end{itemize}
+    
+    \item Основной цикл:
+    \begin{enumerate}
+        \item Выбор вершины с максимальной насыщенностью
+        \item Присвоение минимально возможного цвета
+        \item Обновление насыщенности соседей
+    \end{enumerate}
+\end{enumerate}
+
+\section*{Руководство пользователя}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{interface.png}
+\caption{Главный экран приложения}
+\end{figure}
+
+\section*{Заключение}
+В ходе выполнения курсовой работы была разработана программа для решения задачи составления расписания...
+
+\begin{thebibliography}{9}
+\bibitem{wiki} Теория расписания // Википедия. URL: \url{https://ru.wikipedia.org/wiki/Теория_расписаний}
+\bibitem{habr} Алгоритмы раскраски графов // Habr. URL: \url{https://habr.com/ru/articles/467005/}
+\end{thebibliography}
+
+\end{document}

@@ -5,9 +5,11 @@
 #include "graph.hpp"
 
 struct ObjectiveFunction {
-    int operator()(const std::vector<unsigned>&); 
+    auto operator()(const std::vector<unsigned>&) -> int;
 };
 
 struct GetNeighbours {
-    std::vector<std::pair<size_t, unsigned>> operator()(const clrAlgo::UndirectedGraph&, const std::vector<unsigned>&);
+    auto operator()(const clrAlgo::UndirectedGraph&,
+                    const std::vector<unsigned>&)
+        -> std::vector<std::pair<size_t, unsigned>>;
 };

@@ -1,27 +1,28 @@
 #pragma once
 
+#include <QDebug>
 #include <QObject>
 #include <QSqlDatabase>
-#include <QSqlQuery>
 #include <QSqlError>
-#include <QDebug>
+#include <QSqlQuery>
 
 class DatabaseManager : public QObject {
     Q_OBJECT
 public:
-    static DatabaseManager& instance();
+    static auto instance() -> DatabaseManager&;
 
     void initDatabase();
-    
+
     void registerUser(const QString&, const QString&);
 
-    bool validateUser(const QString&, const QString&);
-private:
-    DatabaseManager();
-    ~DatabaseManager();
+    auto validateUser(const QString&, const QString&) -> bool;
 
     DatabaseManager(const DatabaseManager&) = delete;
-    DatabaseManager& operator=(const DatabaseManager&) = delete;
+    auto operator=(const DatabaseManager&) -> DatabaseManager& = delete;
+
+private:
+    DatabaseManager();
+    ~DatabaseManager() override;
 
     QSqlDatabase db;
 };

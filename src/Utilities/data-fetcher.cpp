@@ -1,22 +1,22 @@
 #include "data-fetcher.h"
 
-#include <QtSql>
-#include <iostream>
 #include <qlogging.h>
 #include <qsqldatabase.h>
 #include <qsqlquery.h>
+
+#include <QtSql>
+#include <iostream>
 #include <stdexcept>
 
-Event::Event(const QString& subject_name, int group_name)
-        : subject_name{subject_name}, group_name{group_name}
-    {}
+Event::Event(QString subject_name, int group_name)
+    : subject_name{std::move(subject_name)}, group_name{group_name} {}
 
-bool confict(const Event& lhs, const Event& rhs) {
+auto confict(const Event& lhs, const Event& rhs) -> bool {
     return lhs.subject_name == rhs.subject_name ||
            lhs.group_name == rhs.group_name;
 }
 
-QVector<Event> fetchEvents(const QString& login) {
+auto fetchEvents(const QString& login) -> QVector<Event> {
     qDebug() << "Started fetching";
 
     QSqlDatabase db = QSqlDatabase::database();
@@ -24,7 +24,7 @@ QVector<Event> fetchEvents(const QString& login) {
     if (!db.open()) {
         throw std::runtime_error("Failed to connect to database");
     }
-   
+
     QMap<QString, int> subjects;
     QSqlQuery subjectQuery(db);
 
@@ -33,12 +33,13 @@ QVector<Event> fetchEvents(const QString& login) {
     qDebug() << "SUBJECTS:";
     while (subjectQuery.next()) {
         qDebug() << subjectQuery.value("name").toString();
-        subjects[subjectQuery.value("name").toString()] = subjectQuery.value("id").toInt();
+        subjects[subjectQuery.value("name").toString()] =
+            subjectQuery.value("id").toInt();
     }
 
     QVector<Event> events;
     QSqlQuery groupQuery("SELECT * FROM GROUPS");
-    
+
     qDebug() << "GROUPS:";
     while (groupQuery.next()) {
         QString group_name;
@@ -83,7 +84,7 @@ QVector<Event> fetchEvents(const QString& login) {
     return events;
 }
 
-clrAlgo::UndirectedGraph constructGraph(const QVector<Event>& events) {
+auto constructGraph(const QVector<Event>& events) -> clrAlgo::UndirectedGraph {
     size_t eventsSize = events.size();
     std::cout << events.size() << '\n';
     clrAlgo::UndirectedGraph graph{eventsSize};

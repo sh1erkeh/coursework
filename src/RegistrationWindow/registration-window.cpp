@@ -1,12 +1,13 @@
 #include "registration-window.h"
-#include "ui_registration-window.h"
 
+#include "ui_registration-window.h"
 #include "usersDB-handler.h"
 
 RegistrationWindow::RegistrationWindow(QWidget* parent)
-        : QWidget(parent), ui(new Ui::RegistrationWindow) {
+    : QWidget(parent), ui(new Ui::RegistrationWindow) {
     ui->setupUi(this);
-    connect(ui->registerButton, &QPushButton::clicked, this, &RegistrationWindow::onRegisterClicked);
+    connect(ui->registerButton, &QPushButton::clicked, this,
+            &RegistrationWindow::onRegisterClicked);
 }
 
 void RegistrationWindow::onRegisterClicked() {
@@ -14,7 +15,8 @@ void RegistrationWindow::onRegisterClicked() {
     QString password = ui->passwordEdit->text();
 
     if (login.isEmpty() || password.isEmpty()) {
-        QMessageBox::warning(this, "Registration Failed", "Please fill in all fields.");
+        QMessageBox::warning(this, "Registration Failed",
+                             "Please fill in all fields.");
         return;
     }
 
@@ -23,6 +25,7 @@ void RegistrationWindow::onRegisterClicked() {
         QMessageBox::information(this, "Success", "Registration successful!");
         this->close();
     } catch (...) {
-        QMessageBox::warning(this, "Registration Failed", "User already exists or database error.");
+        QMessageBox::warning(this, "Registration Failed",
+                             "User already exists or database error.");
     }
 }

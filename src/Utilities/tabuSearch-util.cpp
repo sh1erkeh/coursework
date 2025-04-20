@@ -9,7 +9,9 @@ int ObjectiveFunction::operator()(const std::vector<unsigned>& coloring) {
     return static_cast<int>(temp.size());
 }
 
-std::vector<std::pair<size_t, unsigned>> GetNeighbours::operator()(const clrAlgo::UndirectedGraph& graph, const std::vector<unsigned>& coloring) {
+std::vector<std::pair<size_t, unsigned>> GetNeighbours::operator()(
+    const clrAlgo::UndirectedGraph& graph,
+    const std::vector<unsigned>& coloring) {
     unsigned upper_limit = *std::max_element(coloring.begin(), coloring.end());
     std::vector<std::pair<size_t, unsigned>> result;
 

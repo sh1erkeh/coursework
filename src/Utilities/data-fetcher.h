@@ -1,19 +1,19 @@
 #pragma once
 
-#include "graph.hpp"
-
-#include <QVector>
 #include <QString>
+#include <QVector>
+
+#include "graph.hpp"
 
 struct Event {
     QString subject_name;
     int group_name;
 
-    Event(const QString&, int);
+    Event(QString, int);
 };
 
-bool conflict(const Event&, const Event&);
+auto conflict(const Event&, const Event&) -> bool;
 
-QVector<Event> fetchEvents(const QString&);
+auto fetchEvents(const QString&) -> QVector<Event>;
 
-clrAlgo::UndirectedGraph constructGraph(const QVector<Event>&);
+auto constructGraph(const QVector<Event>&) -> clrAlgo::UndirectedGraph;

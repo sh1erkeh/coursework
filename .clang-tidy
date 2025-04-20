@@ -1,0 +1,9 @@
+Checks: >
+  google-*,
+  -google-readability-todo,
+  -google-runtime-references,
+  clang-analyzer-*,
+  modernize-*
+WarningsAsErrors: '*'
+HeaderFilterRegex: ''
+FormatStyle: google
