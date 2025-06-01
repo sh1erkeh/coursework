@@ -14,6 +14,6 @@ struct Event {
 
 auto conflict(const Event&, const Event&) -> bool;
 
-auto fetchEvents(const QString&) -> QVector<Event>;
+auto fetchEvents(int, const QVector<std::pair<QString, int>>&) -> QVector<Event>;
 
 auto constructGraph(const QVector<Event>&) -> clrAlgo::UndirectedGraph;

@@ -4,14 +4,12 @@ set(sources
     dsatur-util.cpp
     tabuSearch-util.cpp
     data-fetcher.cpp
-    results-printer.cpp
 )
 
 set(headers
     dsatur-util.cpp
     tabuSearch-util.cpp
     data-fetcher.cpp
-    results-printer.h
 )
 
 add_library(${PROJECT_NAME} STATIC)
